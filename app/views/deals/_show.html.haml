@@ -1,0 +1,46 @@
+%section#deals
+  .deals
+    %li.prev= raw('<img src="/images/icons/deal.jpg" alt="Battle" />')
+    %li.next= raw('<img src="/images/icons/deal.jpg" alt="Battle" />')
+  %article
+    %menu
+      %a.button.prev{:href => '/deals/2', :transport => :xhr, :target => '$$ #deals :update()'} Previous
+      %a.button.next{:href => '/deals/3', :transport => :xhr, :target => '$$ #deals :update()'} Next
+    %header
+      %h2 Electronic ARTS
+      %p= raw('<span>20/20</span>')
+      %h3 battlefield 3 Preorder
+      %p= raw('<span>294</span>')
+    %section<
+      .cost>
+        .ticket
+          %p= raw('<span>$</span>29.99')
+          %aside<
+            %menu<
+              %a.button{:href => '#'}> Buy NOW
+        %p.time Time left to buy
+        %time{:title => '24 января 1924'} 39:59:26
+        %ul<
+          %li>
+            %span Value
+            %b= raw('<span>$</span>60')
+          %li>
+            %span Discount
+            %b= raw('50<span class="right">%</span>')
+          %li>
+            %span You save
+            %b= raw('<span>$</span>30')
+        %menu<
+          %a.button{:href => '#'} Buy it for a friend
+        %p.link Official Battlefield 3 Website
+        = link_to 'www.ea.com/ru/battlefield3', 'http://www.ea.com/ru/battlefield3', :target => '_blank'
+      .thumb>= raw('<img src="/images/icons/thumb.png" alt="Battlefield"/>')
+    .description
+      %h4 FPS of the next year
+      .video= raw('<img src="/images/icons/thumb_video.png" alt="Battlefield" />')
+      %p Like a potato, if the human body is not properly mashed and moisturized, it will never be used for anything more than a science-project battery. Make sure your body is properly fluffed and buttered with today's Groupon: for $30, you get a 50-minute relaxation massage at The Pain Free Institute in Hershey (a $60 value).
+      %p At The Pain Free Institute, massage therapist John Williams improves bodily function while easing aches and pains, offering bodywork services that can effectively alleviate ailments ranging from headaches to fibromyalgia. During the relaxation massage, practiced hands knead, roll, and drum the body in a process aimed at decreasing stress, improving mental clarity and circulation, and transforming stiff muscles into flexible monkey-bar testers. The massage's combination of oils, lotions, and targeted strokes make for a soothing, therapeutic experience akin to whittling a bar of lavender soap into a smaller bar of lavender soap.
+  %section#comments
+    %header
+      %a.button{:href => '/deals/1/comments', :transport => 'xhr', :target => '$ !> * + section :update():display(), $ * :state(expanded)'}= raw('<span>869 comments</span>')
+    %section{:hidden => 'hidden'}

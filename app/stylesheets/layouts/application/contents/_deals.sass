@@ -10,9 +10,29 @@ $deal_video_width: 240px
 $deal_video_height: 180px
 
 #container #deals
+  :position relative
   :margin
     :top $baseline * 1.5
+  > .deals
+    :padding 0
+    > li
+      :position absolute
+      :width 325px
+      :height 310px
+      :top 53px
+      :left 0
+      +box-shadow(0 0 10px rgba(0, 0, 0, 0.25))
+      +opacity(0.5, true)
+      > img
+        :display block
+        :width 100%
+        :height 100%
+      &.next
+        :left 100%
+        :margin
+          :left -325px
   > article
+    :position relative
     +grid-container($deal - 2)
     :border 1px solid #d9d9d6
     :background $white
@@ -21,6 +41,43 @@ $deal_video_height: 180px
       :padding
         :left $ninesixty_gutter_width - 1
         :right $ninesixty_gutter_width - 1
+    > menu
+      :padding 0
+      > .button
+        :position absolute
+        :width 40px
+        :height 150px
+        :top 50px
+        :left -41px
+        :background #323232 url(/images/arrows/prev.png) no-repeat center
+        +indented
+        +box-shadow(0 2px 0 rgba(0, 0, 0, 0.15))
+        +hover-opacity(0.95, true)
+        &:before
+          :content ''
+          :position absolute
+          :width 9px
+          :height 100%
+          :top 0
+          :left 0
+          :background url(/images/gradients/arrows.png) repeat-y top right
+        &.is-active
+          :top 51px
+        &.is-working
+          :background
+            :image url(/images/icons/loading.gif) !important
+        &.prev:before
+          :left 100%
+          :margin
+            :left -9px
+          :background
+            :position top left
+        &.next
+          :left 100%
+          :margin
+            :left 1px
+          :background
+            :image url(/images/arrows/next.png)
     > header
       :padding
         :top 3px

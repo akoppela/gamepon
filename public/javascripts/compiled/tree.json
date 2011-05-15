@@ -1,0 +1,45 @@
+{
+  "Gamepon": {
+    "desc": "Basic script",
+    "requires": [
+
+    ],
+    "provides": [
+      "Gamepon"
+    ]
+  },
+  "Widget": {
+    "desc": "Basic widget",
+    "requires": [
+      "Gamepon",
+      "LSD/LSD.Type"
+    ],
+    "provides": [
+      "Gamepon.Widget"
+    ],
+    "Body": {
+      "desc": "Body widget",
+      "requires": [
+        "Gamepon.Widget",
+        "Native/LSD.Native.Body"
+      ],
+      "provides": [
+        "Gamepon.Widget.Body"
+      ]
+    }
+  },
+  "Application": {
+    "desc": "Main script of application",
+    "requires": [
+      "Gamepon",
+      "Gamepon.Widget.*",
+      "Native/LSD.Native.Form",
+      "Native/LSD.Native.Button",
+      "LSD/LSD.Action.*",
+      "LSD/LSD.Application"
+    ],
+    "provides": [
+      "Gamepon.Application"
+    ]
+  }
+}

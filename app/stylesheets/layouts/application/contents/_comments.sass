@@ -8,7 +8,8 @@ $comments_header: $baseline * 1.5
     :text
       :align center
     +children-inline
-    > h2
+    > .button
+      :position relative
       :height $comments_header - 2
       :line-height $comments_header - 2
       :padding
@@ -27,5 +28,30 @@ $comments_header: $baseline * 1.5
         :padding
           :left $ninesixty_gutter_width * 2
         :background url(/images/icons/comments.png) no-repeat left 10px
+      &:before
+        :display none
+        :content ''
+        +absoluted
+        :background #fff url(/images/icons/loading_white.gif) no-repeat center
       &:hover
         :background $white
+      &.is-working:before
+        :display block
+      &.expanded
+        :background $white
+        :border
+          :bottom
+            :color $white
+  > section
+    +grid-container($deal - $ninesixty_gutter_width * 4 - 2)
+    :margin
+      :top -1px
+    :padding
+      :top $baseline * 0.75 - 1
+      :left $ninesixty_gutter_width * 2 - 1
+      :right $ninesixty_gutter_width * 2 - 1
+      :bottom $baseline * 0.75 - 1
+    :border 1px solid #d9d9d6
+    :background $white
+    &[hidden]
+      :display none

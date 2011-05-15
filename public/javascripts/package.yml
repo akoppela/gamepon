@@ -1,0 +1,11 @@
+name: Gamepon
+filename: gamepon.js
+license: Public domain, http://unlicense.org
+copyright: Koppel Andrey
+author: lastdrop
+category: Interface
+sources:
+  - Source/Gamepon.js
+  - Source/Widget.js
+  - Source/Widget/Body.js
+  - Source/Application.js

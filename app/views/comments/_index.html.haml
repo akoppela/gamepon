@@ -1,3 +1,5 @@
-%section#comments
-  %header
-    %h2= raw('<span>869 comments</span>')
+%div#fb-root
+%script{:type => 'text/javascript'}
+  var script = new Element('script', {src: 'http://connect.facebook.net/en_US/all.js#xfbml=1', type: 'text/javascript'});
+  script.inject($('comments'))
+%fb:comments{:href => 'example.com', :num_posts => '1', :width => '610'}

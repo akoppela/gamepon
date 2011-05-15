@@ -254,8 +254,31 @@ body {
 
 /* deals */
 #container #deals {
+  position: relative;
   margin-top: 30px; }
+  #container #deals > .deals {
+    padding: 0; }
+    #container #deals > .deals > li {
+      position: absolute;
+      width: 325px;
+      height: 310px;
+      top: 53px;
+      left: 0;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+      -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+      -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+      opacity: 0.5;
+      -moz-opacity: 0.5;
+      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=50)"; }
+      #container #deals > .deals > li > img {
+        display: block;
+        width: 100%;
+        height: 100%; }
+      #container #deals > .deals > li.next {
+        left: 100%;
+        margin-left: -325px; }
   #container #deals > article {
+    position: relative;
     margin-left: auto;
     margin-right: auto;
     width: 648px;
@@ -267,6 +290,46 @@ body {
     #container #deals > article > * {
       padding-left: 9px;
       padding-right: 9px; }
+    #container #deals > article > menu {
+      padding: 0; }
+      #container #deals > article > menu > .button {
+        position: absolute;
+        width: 40px;
+        height: 150px;
+        top: 50px;
+        left: -41px;
+        background: #323232 url(/images/arrows/prev.png) no-repeat center;
+        text-indent: -99999px;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+        -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+        opacity: 0.95;
+        -moz-opacity: 0.95;
+        filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; }
+        #container #deals > article > menu > .button:hover {
+          opacity: 1;
+          -moz-opacity: 1;
+          filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
+        #container #deals > article > menu > .button:before {
+          content: "";
+          position: absolute;
+          width: 9px;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background: url(/images/gradients/arrows.png) repeat-y top right; }
+        #container #deals > article > menu > .button.is-active {
+          top: 51px; }
+        #container #deals > article > menu > .button.is-working {
+          background-image: url(/images/icons/loading.gif) !important; }
+        #container #deals > article > menu > .button.prev:before {
+          left: 100%;
+          margin-left: -9px;
+          background-position: top left; }
+        #container #deals > article > menu > .button.next {
+          left: 100%;
+          margin-left: 1px;
+          background-image: url(/images/arrows/next.png); }
     #container #deals > article > header {
       padding-top: 3px;
       padding-bottom: 9px;
@@ -389,7 +452,7 @@ body {
                 filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
               #container #deals > article > section > .cost > .ticket > aside > menu > .button.is-active {
                 margin-top: 1px;
-                height: 19px;
+                height: 29px;
                 box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
                 -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
                 -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }
@@ -600,7 +663,8 @@ body {
       display: inline-block;
       *display: inline;
       vertical-align: top; }
-    #container #comments > header > h2 {
+    #container #comments > header > .button {
+      position: relative;
       height: 28px;
       line-height: 28px;
       padding-left: 9px;
@@ -611,12 +675,39 @@ body {
       color: #999999;
       cursor: pointer;
       text-transform: uppercase; }
-      #container #comments > header > h2 > span {
+      #container #comments > header > .button > span {
         display: block;
         padding-left: 20px;
         background: url(/images/icons/comments.png) no-repeat left 10px; }
-      #container #comments > header > h2:hover {
+      #container #comments > header > .button:before {
+        display: none;
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white url(/images/icons/loading_white.gif) no-repeat center; }
+      #container #comments > header > .button:hover {
         background: white; }
+      #container #comments > header > .button.is-working:before {
+        display: block; }
+      #container #comments > header > .button.expanded {
+        background: white;
+        border-bottom-color: white; }
+  #container #comments > section {
+    margin-left: auto;
+    margin-right: auto;
+    width: 608px;
+    margin-top: -1px;
+    padding-top: 14px;
+    padding-left: 19px;
+    padding-right: 19px;
+    padding-bottom: 14px;
+    border: 1px solid #d9d9d6;
+    background: white; }
+    #container #comments > section[hidden] {
+      display: none; }
 
 /* footer */
 #container + footer {
