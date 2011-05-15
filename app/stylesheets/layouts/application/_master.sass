@@ -1,0 +1,24 @@
+/* master
+$base: 12px
+
+html
+  :background #e4e4e4
+  :height 100%
+  
+html, html a
+  :color $black
+  
+body
+  :height 100%
+  :min-height 100%
+  :font
+    :size $base
+    :family Arial, Helvetica, sans-serif
+  :line-height $baseline
+  :background none
+  &.without-text-shadow *
+    :text
+      :shadow none !important
+
+#container
+  +grid-container

@@ -1,0 +1,137 @@
+/* reset */
+html, body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline; }
+
+div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+pre, a, abbr, acronym, address, code, del, dfn, em, img,
+dl, dt, dd, ol, ul, li, fieldset, form, label, input,
+textarea, legend, caption, tbody, tfoot, thead, tr {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline; }
+
+body {
+  line-height: 1.5; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal; }
+
+blockquote, q {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  quotes: "" ""; }
+  blockquote:before, blockquote:after, q:before, q:after {
+    content: ""; }
+
+th, td, caption {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle; }
+
+table {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle; }
+
+li {
+  list-style-type: none; }
+
+a {
+  text-decoration: none;
+  cursor: pointer; }
+  a img {
+    border: 0; }
+
+textarea {
+  resize: none; }
+
+* {
+  outline: none; }
+
+footer, header, aside, nav, menu, video, audio, time, section, article {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  display: block; }
+
+aside {
+  text-align: right; }
+
+time {
+  cursor: help; }
+
+/* colors */
+/* shadows */
+@font-face {
+  src: url("/fonts/cambria-italic.ttf");
+  font-family: Cambria;
+  font-style: italic;
+  src: local("Cambria-italic"), url("/fonts/cambria-italic.ttf") format("truetype"); }
+
+@font-face {
+  src: url("/fonts/cambria.ttf");
+  font-family: Cambria;
+  font-style: normal;
+  src: local("Cambria"), url("/fonts/cambria.ttf") format("truetype"); }
+
+/* master */
+html {
+  background: #e4e4e4;
+  height: 100%; }
+
+html, html a {
+  color: #666666; }
+
+body {
+  height: 100%;
+  min-height: 100%;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 20px;
+  background: none; }
+  body.without-text-shadow * {
+    text-shadow: none !important; }
+
+#container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 960px; }
