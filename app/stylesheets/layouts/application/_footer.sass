@@ -1,4 +1,5 @@
 /* footer
+$footer_icon: 24px
 
 #container + footer
   :position relative
@@ -8,8 +9,41 @@
   :background #000
   > section, > aside
     :height $footer
+    :padding
+      :left $ninesixty_gutter_width * 2
+      :right $ninesixty_gutter_width * 2
     +children-inline
   > section
+    > p
+      :line-height $footer
+      :color $white
+      :font
+        :family AwconQuerorCarved, Arial
+        :size 14px
+    > menu
+      +line-height($footer, $footer_icon)
+      :padding
+        :left $ninesixty_gutter_width * 2
+        :right $ninesixty_gutter_width * 2
+      :border
+        :right 1px solid #262626
+      > a
+        +inline-block
+        :width $footer_icon
+        :height $footer_icon
+        :background no-repeat
+        +indented
+        +hover-opacity(0.9, true)
+        & ~ a
+          :margin
+            :left $ninesixty_gutter_width
+      &:first-child
+        :padding
+          :left 0
     & + aside
       :margin
         :top -$footer
+  > aside
+    > p
+      :color #404040
+      :line-height $footer

@@ -627,7 +627,9 @@ body {
   margin-top: -50px;
   background: black; }
   #container + footer > section, #container + footer > aside {
-    height: 50px; }
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 20px; }
     #container + footer > section > *, #container + footer > aside > * {
       zoom: 1;
       display: inline;
@@ -635,5 +637,42 @@ body {
       display: inline-block;
       *display: inline;
       vertical-align: top; }
+  #container + footer > section > p {
+    line-height: 50px;
+    color: white;
+    font-family: AwconQuerorCarved, Arial;
+    font-size: 14px; }
+  #container + footer > section > menu {
+    height: 24px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-right: 1px solid #262626; }
+    #container + footer > section > menu > a {
+      zoom: 1;
+      display: inline;
+      display: -moz-inline-box;
+      display: inline-block;
+      *display: inline;
+      vertical-align: top;
+      width: 24px;
+      height: 24px;
+      background: no-repeat;
+      text-indent: -99999px;
+      opacity: 0.9;
+      -moz-opacity: 0.9;
+      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=90)"; }
+      #container + footer > section > menu > a:hover {
+        opacity: 1;
+        -moz-opacity: 1;
+        filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
+      #container + footer > section > menu > a ~ a {
+        margin-left: 10px; }
+    #container + footer > section > menu:first-child {
+      padding-left: 0; }
   #container + footer > section + aside {
     margin-top: -50px; }
+  #container + footer > aside > p {
+    color: #404040;
+    line-height: 50px; }
