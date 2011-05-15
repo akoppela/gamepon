@@ -110,7 +110,7 @@ time {
 /* button */
 /* master */
 html {
-  background: #e4e4e4 url(/images/backgrounds/line_bottom.png) no-repeat center bottom;
+  background: #e4e4e4;
   height: 100%; }
 
 html, html a {
@@ -670,6 +670,7 @@ body {
       padding-left: 9px;
       padding-right: 9px;
       border: 1px solid #d1d1d1;
+      background: #e4e4e4;
       font-family: AwconQuerorCarved, Arial;
       font-size: 16px;
       color: #999999;
@@ -712,15 +713,15 @@ body {
 /* footer */
 #container + footer {
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  width: 960px;
-  margin-top: -50px;
-  background: black; }
+  margin-top: -50px; }
   #container + footer > section, #container + footer > aside {
+    margin-left: auto;
+    margin-right: auto;
+    width: 920px;
     height: 50px;
     padding-left: 20px;
-    padding-right: 20px; }
+    padding-right: 20px;
+    background: black; }
     #container + footer > section > *, #container + footer > aside > * {
       zoom: 1;
       display: inline;
@@ -767,3 +768,13 @@ body {
   #container + footer > aside > p {
     color: #404040;
     line-height: 50px; }
+  #container + footer:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 250px;
+    left: 0;
+    top: 100%;
+    margin-top: -250px;
+    background: url(/images/backgrounds/line_bottom.png) no-repeat center bottom; }
