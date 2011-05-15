@@ -1,0 +1,31 @@
+/* comments
+$comments_header: $baseline * 1.5
+
+#container #comments
+  :margin
+    :top $baseline / 2
+  > header
+    :text
+      :align center
+    +children-inline
+    > h2
+      :height $comments_header - 2
+      :line-height $comments_header - 2
+      :padding
+        :left $ninesixty_gutter_width - 1
+        :right $ninesixty_gutter_width - 1
+      :border 1px solid #d1d1d1
+      :font
+        :family AwconQuerorCarved, Arial
+        :size 16px
+      :color $grey
+      :cursor pointer
+      :text
+        :transform uppercase
+      > span
+        :display block
+        :padding
+          :left $ninesixty_gutter_width * 2
+        :background url(/images/icons/comments.png) no-repeat left 10px
+      &:hover
+        :background $white

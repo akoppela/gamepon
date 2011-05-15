@@ -1,0 +1,281 @@
+/* deals
+$deal: 650px
+
+$deal_thumb_width: 380px
+$deal_thumb_height: 250px
+
+$deal_ticket: $baseline * 2.5
+
+$deal_video_width: 240px
+$deal_video_height: 180px
+
+#container #deals
+  :margin
+    :top $baseline * 1.5
+  > article
+    +grid-container($deal - 2)
+    :border 1px solid #d9d9d6
+    :background $white
+    +box-shadow(0 2px 0 rgba(0, 0, 0, 0.05))
+    > *
+      :padding
+        :left $ninesixty_gutter_width - 1
+        :right $ninesixty_gutter_width - 1
+    > header
+      :padding
+        :top 3px
+        :bottom $baseline / 2 - 1
+      :text
+        :transform uppercase
+      > h2
+        :font
+          :family AwconQuerorCarved, Arial
+        :color $grey
+        & + p
+          :margin
+            :top -$baseline
+          :color $light_grey
+          > span
+            :padding
+              :left 12px
+            :background url(/images/icons/check.png) no-repeat left center
+      > h3
+        :line-height 22px
+        :font
+          :family AwconQuerorCarved, Arial
+          :size 19px
+        :color $black
+        & + p
+          :margin
+            :top -22px
+          :font
+            :size 19px
+          :color $light_black
+          > span
+            :padding
+              :left $ninesixty_gutter_width * 2
+            :background url(/images/icons/box.png) no-repeat left center
+      > p
+        :font
+          :family AwconQuerorCarved, Arial
+        :text
+          :align right
+        > span
+          +inline-block
+    > section
+      :border
+        :top 1px solid #d9d9d6
+      :padding
+        :top $baseline / 2 - 1
+        :bottom $baseline / 2
+      +children-inline
+      > .cost
+        :width $deal - $deal_thumb_width - $ninesixty_gutter_width * 3
+        > .ticket
+          :position relative
+          :padding
+            :left $ninesixty_gutter_width
+            :right $ninesixty_gutter_width
+          :margin
+            :left 3px
+            :right 3px
+          :background #e4e4d8
+          > *
+            :height $deal_ticket - 1
+          > p
+            :line-height $deal_ticket
+            :font
+              :family AwconQuerorCarved, Arial
+              :size 30px
+            +colors($black, $white_fifty_shadow)
+            > span
+              +inline-block
+              :font
+                :size 23px
+              :color $light_black
+              :margin
+                :right $ninesixty_gutter_width / 2
+            & + aside
+              :margin
+                :top -$deal_ticket + 1
+          > aside
+            +children-inline
+            > menu
+              :height $big_button
+              :padding
+                :top ($deal_ticket - $big_button) / 2 - 1
+                :bottom ($deal_ticket - $big_button) / 2
+              :padding
+                :left $ninesixty_gutter_width
+              :border
+                :left 1px solid #d7d7cc
+              > .button
+                +inline-block
+                +big-green-button
+          &:before, &:after
+            :content ''
+            :position absolute
+            :width 3px
+            :height 100%
+            :top 0
+            :left -3px
+            :background url(/images/backgrounds/ticket.png) repeat-y left top
+          &:after
+            :left 100%
+            :background
+              :position right top
+        > .time, > time
+          :line-height $baseline * 2
+          :font
+            :family AwconQuerorCarved, Arial
+        > .time  
+          :padding
+            :left $ninesixty_gutter_width
+            :right $ninesixty_gutter_width
+          :color $grey
+          :text
+            :transform uppercase
+          & + time
+            :margin
+              :top -$baseline * 2
+        > time
+          :position relative
+          :padding
+            :left $ninesixty_gutter_width * 1.5
+            :right $ninesixty_gutter_width * 1.5
+          :color $black
+          :font
+            :size 16px
+          :text
+            :align right
+        > ul
+          :border
+            :top 1px solid #e4e4d8
+            :bottom 1px solid #e4e4d8
+          :text
+            :align center
+          > li
+            +inline-block
+            :width 33%
+            :height $baseline * 2.5 - 1
+            :font
+              :family AwconQuerorCarved, Arial
+            > span
+              :margin
+                :top 3px
+              :display block
+              :font
+                :size 10px
+              :color $grey
+            > b
+              :margin
+                :top -3px
+              :display block
+              :font
+                :size 19px
+                :weight normal
+              :color $light_black
+              > span
+                +inline-block
+                :font
+                  :size 16px
+                :margin
+                  :left 3px
+                &.right
+                  :margin
+                    :left 0
+                    :right 3px
+            & ~ li
+              :border
+                :left 1px dotted #e4e4d8
+          & + menu
+            :margin
+              :top -1px
+        > menu
+          :position relative
+          :height $button
+          :padding
+            :top $baseline / 2
+            :bottom $baseline / 2
+          :border
+            :top 1px solid #e4e4d8
+            :bottom 1px solid #e4e4d8
+          :text
+            :align center
+          > .button
+            :position relative
+            :z-index 1
+            +inline-block
+            +black-button
+          &:before
+            :content ''
+            :position absolute
+            :top 1px
+            :bottom 1px
+            :left 0
+            :right 0
+            :background url(/images/backgrounds/cost_shadow.png) repeat-y center top
+        > .link
+          :margin
+            :top $baseline / 4
+          :color $black
+          :font
+            :family AwconQuerorCarved, Arial
+          :padding
+            :left $ninesixty_gutter_width * 1.5
+          :background url(/images/icons/link.png) no-repeat left 5px
+          :text
+            :transform uppercase
+          & + a
+            +inline-block
+            :margin
+              :top -$baseline / 4
+              :left $ninesixty_gutter_width * 1.5
+            :color $light_black
+            +hover-underline
+        & + .thumb
+          :margin
+            :left $ninesixty_gutter_width
+      > .thumb
+        :width $deal_thumb_width - 4
+        :height $deal_thumb_height - 4
+        :border 2px solid #e4e4d8
+        > img
+          :display block
+          :width 100%
+          :height 100%
+    > .description
+      :overflow hidden
+      :margin
+        :top $baseline / 4
+      :padding
+        :bottom $baseline * 0.75
+      > h4
+        :color $black
+        :font
+          :family AwconQuerorCarved, Arial
+          :size 16px
+      > .video
+        :position relative
+        :margin
+          :top $baseline / 2
+          :right $ninesixty_gutter_width * 2
+          :bottom $baseline / 2
+        :width $deal_video_width - 4
+        :height $deal_video_height - 4
+        :border 2px solid #e4e4d8
+        :float left
+        :cursor pointer
+        +hover-opacity(0.95, true)
+        > img
+          :display block
+          :width 100%
+          :height 100%
+        &:before
+          :content ''
+          +absoluted
+          :background url(/images/icons/play.png) no-repeat center
+      > p
+        :line-height 18px
+        :margin
+          :top $baseline / 2

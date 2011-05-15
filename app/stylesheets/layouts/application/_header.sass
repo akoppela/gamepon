@@ -45,14 +45,16 @@ $header_logo: 176px
       +line-height($header, $button)
       > .button
         +inline-block
-        +button
+        +grey-button
     > p
       +line-height($header)
       :padding
         :right $ninesixty_gutter_width * 2
+      :text
+        :transform uppercase
       > a
         :font
-          :family AwconQuerorCarved
+          :family AwconQuerorCarved, Arial
           :size 14px
         :color $white
         +hover-underline

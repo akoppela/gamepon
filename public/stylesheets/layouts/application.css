@@ -133,9 +133,9 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 960px;
-  height: 100%; }
+  min-height: 100%; }
   #container > .hfooter {
-    height: 50px; }
+    height: 70px; }
 
 /* header */
 #container > header {
@@ -203,9 +203,8 @@ body {
       line-height: 18px;
       padding-left: 10px;
       padding-right: 10px;
-      font-family: AwconQuerorCarved;
-      color: #fffcfc;
-      background: #999999;
+      font-family: AwconQuerorCarved, Arial;
+      text-transform: uppercase;
       -moz-border-radius: 3px;
       -o-border-radius: 3px;
       -ms-border-radius: 3px;
@@ -217,7 +216,9 @@ body {
       -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
       opacity: 0.95;
       -moz-opacity: 0.95;
-      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; }
+      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+      color: #fffcfc;
+      background: #999999; }
       #container > header > aside > menu > .button:hover {
         opacity: 1;
         -moz-opacity: 1;
@@ -232,9 +233,10 @@ body {
     height: 20px;
     padding-top: 20px;
     padding-bottom: 20px;
-    padding-right: 20px; }
+    padding-right: 20px;
+    text-transform: uppercase; }
     #container > header > aside > p > a {
-      font-family: AwconQuerorCarved;
+      font-family: AwconQuerorCarved, Arial;
       font-size: 14px;
       color: white;
       text-decoration: none; }
@@ -249,6 +251,372 @@ body {
     top: 100%;
     margin-top: 1px;
     background: url(/images/backgrounds/header_shadow.png) no-repeat; }
+
+/* deals */
+#container #deals {
+  margin-top: 30px; }
+  #container #deals > article {
+    margin-left: auto;
+    margin-right: auto;
+    width: 648px;
+    border: 1px solid #d9d9d6;
+    background: white;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05); }
+    #container #deals > article > * {
+      padding-left: 9px;
+      padding-right: 9px; }
+    #container #deals > article > header {
+      padding-top: 3px;
+      padding-bottom: 9px;
+      text-transform: uppercase; }
+      #container #deals > article > header > h2 {
+        font-family: AwconQuerorCarved, Arial;
+        color: #999999; }
+        #container #deals > article > header > h2 + p {
+          margin-top: -20px;
+          color: #cccccc; }
+          #container #deals > article > header > h2 + p > span {
+            padding-left: 12px;
+            background: url(/images/icons/check.png) no-repeat left center; }
+      #container #deals > article > header > h3 {
+        line-height: 22px;
+        font-family: AwconQuerorCarved, Arial;
+        font-size: 19px;
+        color: #272727; }
+        #container #deals > article > header > h3 + p {
+          margin-top: -22px;
+          font-size: 19px;
+          color: #666666; }
+          #container #deals > article > header > h3 + p > span {
+            padding-left: 20px;
+            background: url(/images/icons/box.png) no-repeat left center; }
+      #container #deals > article > header > p {
+        font-family: AwconQuerorCarved, Arial;
+        text-align: right; }
+        #container #deals > article > header > p > span {
+          zoom: 1;
+          display: inline;
+          display: -moz-inline-box;
+          display: inline-block;
+          *display: inline;
+          vertical-align: top; }
+    #container #deals > article > section {
+      border-top: 1px solid #d9d9d6;
+      padding-top: 9px;
+      padding-bottom: 10px; }
+      #container #deals > article > section > * {
+        zoom: 1;
+        display: inline;
+        display: -moz-inline-box;
+        display: inline-block;
+        *display: inline;
+        vertical-align: top; }
+      #container #deals > article > section > .cost {
+        width: 240px; }
+        #container #deals > article > section > .cost > .ticket {
+          position: relative;
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-left: 3px;
+          margin-right: 3px;
+          background: #e4e4d8; }
+          #container #deals > article > section > .cost > .ticket > * {
+            height: 49px; }
+          #container #deals > article > section > .cost > .ticket > p {
+            line-height: 50px;
+            font-family: AwconQuerorCarved, Arial;
+            font-size: 30px;
+            color: #272727;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); }
+            #container #deals > article > section > .cost > .ticket > p > span {
+              zoom: 1;
+              display: inline;
+              display: -moz-inline-box;
+              display: inline-block;
+              *display: inline;
+              vertical-align: top;
+              font-size: 23px;
+              color: #666666;
+              margin-right: 5px; }
+            #container #deals > article > section > .cost > .ticket > p + aside {
+              margin-top: -49px; }
+          #container #deals > article > section > .cost > .ticket > aside > * {
+            zoom: 1;
+            display: inline;
+            display: -moz-inline-box;
+            display: inline-block;
+            *display: inline;
+            vertical-align: top; }
+          #container #deals > article > section > .cost > .ticket > aside > menu {
+            height: 30px;
+            padding-top: 9px;
+            padding-bottom: 10px;
+            padding-left: 10px;
+            border-left: 1px solid #d7d7cc; }
+            #container #deals > article > section > .cost > .ticket > aside > menu > .button {
+              zoom: 1;
+              display: inline;
+              display: -moz-inline-box;
+              display: inline-block;
+              *display: inline;
+              vertical-align: top;
+              height: 30px;
+              line-height: 28px;
+              padding-left: 10px;
+              padding-right: 10px;
+              font-family: AwconQuerorCarved, Arial;
+              text-transform: uppercase;
+              -moz-border-radius: 3px;
+              -o-border-radius: 3px;
+              -ms-border-radius: 3px;
+              -khtml-border-radius: 3px;
+              -webkit-border-radius: 3px;
+              border-radius: 3px;
+              box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+              -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+              -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+              opacity: 0.95;
+              -moz-opacity: 0.95;
+              filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+              font-size: 16px;
+              color: white;
+              background: #669900; }
+              #container #deals > article > section > .cost > .ticket > aside > menu > .button:hover {
+                opacity: 1;
+                -moz-opacity: 1;
+                filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
+              #container #deals > article > section > .cost > .ticket > aside > menu > .button.is-active {
+                margin-top: 1px;
+                height: 19px;
+                box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+                -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+                -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }
+          #container #deals > article > section > .cost > .ticket:before, #container #deals > article > section > .cost > .ticket:after {
+            content: "";
+            position: absolute;
+            width: 3px;
+            height: 100%;
+            top: 0;
+            left: -3px;
+            background: url(/images/backgrounds/ticket.png) repeat-y left top; }
+          #container #deals > article > section > .cost > .ticket:after {
+            left: 100%;
+            background-position: right top; }
+        #container #deals > article > section > .cost > .time, #container #deals > article > section > .cost > time {
+          line-height: 40px;
+          font-family: AwconQuerorCarved, Arial; }
+        #container #deals > article > section > .cost > .time {
+          padding-left: 10px;
+          padding-right: 10px;
+          color: #999999;
+          text-transform: uppercase; }
+          #container #deals > article > section > .cost > .time + time {
+            margin-top: -40px; }
+        #container #deals > article > section > .cost > time {
+          position: relative;
+          padding-left: 15px;
+          padding-right: 15px;
+          color: #272727;
+          font-size: 16px;
+          text-align: right; }
+        #container #deals > article > section > .cost > ul {
+          border-top: 1px solid #e4e4d8;
+          border-bottom: 1px solid #e4e4d8;
+          text-align: center; }
+          #container #deals > article > section > .cost > ul > li {
+            zoom: 1;
+            display: inline;
+            display: -moz-inline-box;
+            display: inline-block;
+            *display: inline;
+            vertical-align: top;
+            width: 33%;
+            height: 49px;
+            font-family: AwconQuerorCarved, Arial; }
+            #container #deals > article > section > .cost > ul > li > span {
+              margin-top: 3px;
+              display: block;
+              font-size: 10px;
+              color: #999999; }
+            #container #deals > article > section > .cost > ul > li > b {
+              margin-top: -3px;
+              display: block;
+              font-size: 19px;
+              font-weight: normal;
+              color: #666666; }
+              #container #deals > article > section > .cost > ul > li > b > span {
+                zoom: 1;
+                display: inline;
+                display: -moz-inline-box;
+                display: inline-block;
+                *display: inline;
+                vertical-align: top;
+                font-size: 16px;
+                margin-left: 3px; }
+                #container #deals > article > section > .cost > ul > li > b > span.right {
+                  margin-left: 0;
+                  margin-right: 3px; }
+            #container #deals > article > section > .cost > ul > li ~ li {
+              border-left: 1px dotted #e4e4d8; }
+          #container #deals > article > section > .cost > ul + menu {
+            margin-top: -1px; }
+        #container #deals > article > section > .cost > menu {
+          position: relative;
+          height: 20px;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          border-top: 1px solid #e4e4d8;
+          border-bottom: 1px solid #e4e4d8;
+          text-align: center; }
+          #container #deals > article > section > .cost > menu > .button {
+            position: relative;
+            z-index: 1;
+            zoom: 1;
+            display: inline;
+            display: -moz-inline-box;
+            display: inline-block;
+            *display: inline;
+            vertical-align: top;
+            height: 20px;
+            line-height: 18px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: AwconQuerorCarved, Arial;
+            text-transform: uppercase;
+            -moz-border-radius: 3px;
+            -o-border-radius: 3px;
+            -ms-border-radius: 3px;
+            -khtml-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+            -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+            -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+            opacity: 0.95;
+            -moz-opacity: 0.95;
+            filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+            color: white;
+            background: #333333; }
+            #container #deals > article > section > .cost > menu > .button:hover {
+              opacity: 1;
+              -moz-opacity: 1;
+              filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
+            #container #deals > article > section > .cost > menu > .button.is-active {
+              margin-top: 1px;
+              height: 19px;
+              box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+              -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+              -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }
+          #container #deals > article > section > .cost > menu:before {
+            content: "";
+            position: absolute;
+            top: 1px;
+            bottom: 1px;
+            left: 0;
+            right: 0;
+            background: url(/images/backgrounds/cost_shadow.png) repeat-y center top; }
+        #container #deals > article > section > .cost > .link {
+          margin-top: 5px;
+          color: #272727;
+          font-family: AwconQuerorCarved, Arial;
+          padding-left: 15px;
+          background: url(/images/icons/link.png) no-repeat left 5px;
+          text-transform: uppercase; }
+          #container #deals > article > section > .cost > .link + a {
+            zoom: 1;
+            display: inline;
+            display: -moz-inline-box;
+            display: inline-block;
+            *display: inline;
+            vertical-align: top;
+            margin-top: -5px;
+            margin-left: 15px;
+            color: #666666;
+            text-decoration: none; }
+            #container #deals > article > section > .cost > .link + a:hover {
+              text-decoration: underline; }
+        #container #deals > article > section > .cost + .thumb {
+          margin-left: 10px; }
+      #container #deals > article > section > .thumb {
+        width: 376px;
+        height: 246px;
+        border: 2px solid #e4e4d8; }
+        #container #deals > article > section > .thumb > img {
+          display: block;
+          width: 100%;
+          height: 100%; }
+    #container #deals > article > .description {
+      overflow: hidden;
+      margin-top: 5px;
+      padding-bottom: 15px; }
+      #container #deals > article > .description > h4 {
+        color: #272727;
+        font-family: AwconQuerorCarved, Arial;
+        font-size: 16px; }
+      #container #deals > article > .description > .video {
+        position: relative;
+        margin-top: 10px;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        width: 236px;
+        height: 176px;
+        border: 2px solid #e4e4d8;
+        float: left;
+        cursor: pointer;
+        opacity: 0.95;
+        -moz-opacity: 0.95;
+        filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; }
+        #container #deals > article > .description > .video:hover {
+          opacity: 1;
+          -moz-opacity: 1;
+          filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=100)"; }
+        #container #deals > article > .description > .video > img {
+          display: block;
+          width: 100%;
+          height: 100%; }
+        #container #deals > article > .description > .video:before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: url(/images/icons/play.png) no-repeat center; }
+      #container #deals > article > .description > p {
+        line-height: 18px;
+        margin-top: 10px; }
+
+/* comments */
+#container #comments {
+  margin-top: 10px; }
+  #container #comments > header {
+    text-align: center; }
+    #container #comments > header > * {
+      zoom: 1;
+      display: inline;
+      display: -moz-inline-box;
+      display: inline-block;
+      *display: inline;
+      vertical-align: top; }
+    #container #comments > header > h2 {
+      height: 28px;
+      line-height: 28px;
+      padding-left: 9px;
+      padding-right: 9px;
+      border: 1px solid #d1d1d1;
+      font-family: AwconQuerorCarved, Arial;
+      font-size: 16px;
+      color: #999999;
+      cursor: pointer;
+      text-transform: uppercase; }
+      #container #comments > header > h2 > span {
+        display: block;
+        padding-left: 20px;
+        background: url(/images/icons/comments.png) no-repeat left 10px; }
+      #container #comments > header > h2:hover {
+        background: white; }
 
 /* footer */
 #container + footer {
