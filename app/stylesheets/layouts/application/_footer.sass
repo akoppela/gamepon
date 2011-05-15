@@ -1,0 +1,15 @@
+/* footer
+
+#container + footer
+  :position relative
+  +grid-container
+  :margin
+    :top -$footer
+  :background #000
+  > section, > aside
+    :height $footer
+    +children-inline
+  > section
+    & + aside
+      :margin
+        :top -$footer

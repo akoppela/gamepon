@@ -1,0 +1,68 @@
+/* header
+$header: $baseline * 3
+$header_logo: 176px
+
+#container > header
+  :position relative
+  :background #000 url(/images/backgrounds/carbon.png)
+  +box-shadow(inset 0 -3px 0 rgba(255, 255, 255, 0.1))
+  > section, > aside
+    :height $header
+    +children-inline
+    > menu
+      :padding
+        :left $ninesixty_gutter_width * 2 + 1
+        :right $ninesixty_gutter_width * 2
+      :background url(/images/separators/header.png) no-repeat left top
+  > section
+    > h1
+      :width $header_logo
+      :height $header
+      > a
+        :display block
+        :height 100%
+        :background url(/images/icons/logo.png) no-repeat center
+        +indented
+        +hover-opacity(0.9, true)
+    > menu
+      +line-height($header)
+      > a
+        :color $grey
+        :font
+          :family AwconQuerorCarved, Arial
+          :size 14px
+        :text
+          :transform uppercase
+        +hover-underline
+        & ~ a
+          :margin
+            :left $ninesixty_gutter_width * 3
+    & + aside
+      :margin
+        :top -$header
+  > aside
+    > menu
+      +line-height($header, $button)
+      > .button
+        +inline-block
+        +button
+    > p
+      +line-height($header)
+      :padding
+        :right $ninesixty_gutter_width * 2
+      > a
+        :font
+          :family AwconQuerorCarved
+          :size 14px
+        :color $white
+        +hover-underline
+  &:before
+    :content ''
+    :position absolute
+    :width 100%
+    :height 25px
+    :left 0
+    :top 100%
+    :margin
+      :top 1px
+    :background url(/images/backgrounds/header_shadow.png) no-repeat

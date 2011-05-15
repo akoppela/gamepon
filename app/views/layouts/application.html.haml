@@ -9,4 +9,7 @@
     /= javascript_include_tag 'compiled/includes'
   %body
     #container
+      = render 'shared/header'
       = yield
+      .hfooter
+    = render 'shared/footer'

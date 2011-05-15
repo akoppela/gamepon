@@ -1,0 +1,23 @@
+/* button
+$button: $baseline
+
+$button_white: #fffcfc
+
+= button($heigth: $button)
+  :height $button
+  :line-height $button - 2
+  :padding
+    :left $ninesixty_gutter_width
+    :right $ninesixty_gutter_width
+  :font
+    :family AwconQuerorCarved
+  :color $button_white
+  :background $grey
+  +border-radius(3px)
+  +box-shadow(inset 0 -2px 0 rgba(0, 0, 0, 0.25))
+  +hover-opacity(0.95, true)
+  &.is-active
+    :margin
+      :top 1px
+    :height $button - 1
+    +box-shadow(inset 0 -1px 0 rgba(0, 0, 0, 0.25))
