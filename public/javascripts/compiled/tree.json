@@ -17,6 +17,16 @@
     "provides": [
       "Gamepon.Widget"
     ],
+    "Facebook": {
+      "desc": "Body widget",
+      "requires": [
+        "Gamepon.Widget",
+        "LSD/LSD.Native"
+      ],
+      "provides": [
+        "Gamepon.Widget.Facebook"
+      ]
+    },
     "Body": {
       "desc": "Body widget",
       "requires": [

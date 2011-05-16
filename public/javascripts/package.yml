@@ -8,4 +8,5 @@ sources:
   - Source/Gamepon.js
   - Source/Widget.js
   - Source/Widget/Body.js
+  - Source/Widget/Facebook.js
   - Source/Application.js

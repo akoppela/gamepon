@@ -6950,63 +6950,6 @@ LSD.Module.Options.initialize = function(element, options) {
 /*
 ---
  
-script: Dialog.js
- 
-description: Work with dialog
- 
-license: Public domain (http://unlicense.org).
- 
-requires:
-  - LSD.Mixin
- 
-provides: 
-  - LSD.Mixin.Dialog
- 
-...
-*/
-
-LSD.Mixin.Dialog = new Class({
-  behaviour: '[dialog]',
-  
-  options: {
-    layout: {
-      dialog: "body[type=dialog]"
-    },
-    chain: {
-      dialog: function() {
-        var target = this.getDialogTarget();
-        if (target) return {action: 'dialog', target: target, priority: 50};
-      }
-    },
-    events: {
-      dialogs: {}
-    }
-  },
-  
-  getDialog: function(name) {
-    if (!this.dialogs) this.dialogs = {};
-    if (!this.dialogs[name]) {
-      this.dialogs[name] = this.options.layout[name] ? this.buildDialog.apply(this, arguments) : LSD.Element.create('body-dialog-' + name);
-    }
-    return this.dialogs[name];
-  },
-  
-  buildDialog: function(name) {
-    var layout = {}
-    layout[this.options.layout.dialog] = this.options.layout[name];
-    var dialog = this.buildLayout(layout)[0];
-    var events = this.options.events.dialogs;
-    if (events[name]) dialog.addEvents(events[name]);
-    return dialog;
-  },
-  
-  getDialogTarget: function() {
-    return this.attributes.dialog && this.getTarget(this.attributes.dialog);
-  }
-})
-/*
----
- 
 script: Value.js
  
 description: Add your widget have a real form value.
@@ -7133,6 +7076,63 @@ LSD.Mixin.Value = new Class({
     return true;
   }
 });
+/*
+---
+ 
+script: Dialog.js
+ 
+description: Work with dialog
+ 
+license: Public domain (http://unlicense.org).
+ 
+requires:
+  - LSD.Mixin
+ 
+provides: 
+  - LSD.Mixin.Dialog
+ 
+...
+*/
+
+LSD.Mixin.Dialog = new Class({
+  behaviour: '[dialog]',
+  
+  options: {
+    layout: {
+      dialog: "body[type=dialog]"
+    },
+    chain: {
+      dialog: function() {
+        var target = this.getDialogTarget();
+        if (target) return {action: 'dialog', target: target, priority: 50};
+      }
+    },
+    events: {
+      dialogs: {}
+    }
+  },
+  
+  getDialog: function(name) {
+    if (!this.dialogs) this.dialogs = {};
+    if (!this.dialogs[name]) {
+      this.dialogs[name] = this.options.layout[name] ? this.buildDialog.apply(this, arguments) : LSD.Element.create('body-dialog-' + name);
+    }
+    return this.dialogs[name];
+  },
+  
+  buildDialog: function(name) {
+    var layout = {}
+    layout[this.options.layout.dialog] = this.options.layout[name];
+    var dialog = this.buildLayout(layout)[0];
+    var events = this.options.events.dialogs;
+    if (events[name]) dialog.addEvents(events[name]);
+    return dialog;
+  },
+  
+  getDialogTarget: function() {
+    return this.attributes.dialog && this.getTarget(this.attributes.dialog);
+  }
+})
 /*
 ---
  
@@ -7591,348 +7591,6 @@ CSS.parser = x
 
 })(typeof exports != 'undefined' ? exports : this);
 
-/*
----
-name    : SheetParser.Property
-
-authors   : Yaroslaff Fedin
-
-license   : MIT
-
-requires : SheetParser.CSS
-
-provides : SheetParser.Property
-...
-*/
-
-
-(function(exports) {
-  /*<CommonJS>*/
-  var combineRegExp = (typeof require == 'undefined')
-    ?  exports.combineRegExp
-    :  require('./sg-regex-tools').combineRegExp
-  var SheetParser = exports.SheetParser
-  /*</CommonJS>*/
-  
-  var Property = SheetParser.Property = {version: '0.2 dev'};
-  
-  /*
-    Finds optional groups in expressions and builds keyword
-    indecies for them. Keyword index is an object that has
-    keywords as keys and values as property names.
-    
-    Index only holds keywords that can be uniquely identified
-    as one of the properties in group.
-  */
-  
-  Property.index = function(properties, context) {
-    var index = {};
-    for (var i = 0, property; property = properties[i]; i++) {
-      if (property.push) {
-        var group = index[i] = {};
-        for (var j = 0, prop; prop = property[j]; j++) {
-          var keys = context[prop].keywords;
-          if (keys) for (var key in keys) {
-            if (group[key] == null) group[key] = prop;
-            else group[key] = false;
-          }
-        }
-        for (var keyword in group) if (!group[keyword]) delete group[keyword];
-      }
-    }
-    return index;
-  };
-  
-  /*
-    Simple value 
-  */
-
-  Property.simple = function(types, keywords) {
-    return function(value) {
-      if (keywords && keywords[value]) return true;
-      if (types) for (var i = 0, type; type = types[i++];) if (Type[type](value)) return true;
-      return false;
-    }
-  };
-  
-  /*
-    Links list of inambigous arguments with corresponding properties keeping
-    the order.
-  */
-  
-  Property.shorthand = function(properties, keywords, context) {
-    var index, r = 0;
-    for (var i = 0, property; property = properties[i++];) if (!property.push) r++;
-    return function() {
-      var result = [], used = {}, start = 0, group, k = 0, l = arguments.length;
-      for (var i = 0, argument; argument = arguments[i]; i++) {
-        var property = properties[k];
-        if (!property) return false;
-        if ((group = (property.push && property))) property = properties[k + 1];
-        if (property) {
-          if (context[property](argument)) k++
-          else property = false
-        }
-        if (group) {
-          if (!property) {
-            if (!index) index = Property.index(properties, context)
-            if (property = index[k][argument])
-              if (used[property]) return false;
-              else used[property] = 1;
-          }
-          if ((property && !used[property]) || (i == l - 1)) {
-            if (i - start > group.length) return false;
-            for (var j = start; j < (i + +!property); j++) 
-              if (!result[j])
-                for (var m = 0, optional; optional = group[m++];) {
-                  if (!used[optional] && context[optional](arguments[j])) {
-                    result[j] = optional;
-                    used[optional] = true
-                    break;
-                  }
-                }
-            start = i;
-            k++;
-          }
-        }
-        if (result[i] == null) result[i] = property;
-      }
-      if (i < r) return false
-      for (var i = 0, j = arguments.length, object = {}; i < j; i++) {
-        var value = result[i];
-        if (!value) return false;
-        object[value] = arguments[i];
-      }
-      return object;
-    };
-  }
-
-  /*
-    A shorthand that operates on collection of properties. When given values
-    are not enough (less than properties in collection), the value sequence
-    is repeated until all properties are filled.     
-  */
-
-  Property.collection = function(properties, keywords, context) {
-    var first = context[properties[0]];
-    if (first.type != 'simple') 
-      return function(arg) {
-        var args = (!arg || !arg.push) ? [Array.prototype.slice.call(arguments)] : arguments;
-        var length = args.length;
-        var result = {};
-        for (var i = 0, property; property = properties[i]; i++) {
-          var values = context[property].apply(1, args[i] || args[i % 2] || args[0]);
-          if (!values) return false;
-          for (var prop in values) result[prop] = values[prop];
-        }
-        return result;
-      }
-    else
-      return function() {
-        var length = arguments.length;
-        var result = {};
-        for (var i = 0, property; property = properties[i]; i++) {
-          var values = arguments[i] || arguments[i % 2] || arguments[0];
-          if (!context[property].call(1, values)) return false;
-          result[property] = values;
-        }
-        return result;
-      }
-  };
-  
-  /* 
-    Multiple value property accepts arrays as arguments
-    as well as regular stuff
-  */
-  
-  Property.multiple = function(arg) {
-    //if (arg.push)
-  }
-  
-  Property.compile = function(definition, context) {
-    var properties, keywords, types;
-    for (var i = 0, bit; bit = definition[i++];) {
-      if (bit.push) properties = bit;
-      else if (bit.indexOf) {
-        if (!Type[bit]) {
-          if (!keywords) keywords = {};
-          keywords[bit] = 1;
-        } else types ? types.push(bit) : (types = [bit]);
-      } else options = bit;
-    }
-    var type = properties ? (keywords && keywords.collection ? "collection" : "shorthand") : 'simple'
-    var property = Property[type](properties || types, keywords, context);
-    if (keywords) property.keywords = keywords;
-    if (properties) {
-      var props = [];
-      for (var i = 0, prop; prop = properties[i++];) prop.push ? props.push.apply(props, prop) : props.push(prop);
-      property.properties = props;
-    }
-    property.type = type;
-    return property;
-  };
-  
-  
-  var Type = Property.Type = {
-    length: function(obj) {
-      return typeof obj == 'number' || (!obj.indexOf && ('number' in obj) && obj.unit && (obj.unit != '%'))
-    },
-  
-    color: function(obj) {
-      return obj.indexOf ? obj.match(/^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/) : (obj.isColor || obj.rgba || obj.rgb || obj.hsb)
-    },
-    
-    number: function(obj) {
-      return typeof obj == 'number'
-    },
-    
-    integer: function(obj) {
-      return obj % 1 == 0 && ((0 + obj).toString() == obj)
-    },
-  
-    keyword: function(keywords) {
-      var storage;
-      for (var i = 0, keyword; keyword = keywords[i++];) storage[keyword] = 1;
-      return function(keyword) {
-        return !!storage[keyword]
-      }
-    },
-    
-    strings: function(obj) {
-      return !!obj.indexOf
-    },
-    
-    url: function(obj) {
-      return !obj.indexOf && ("url" in obj);
-    },
-    
-    position: function(obj) {        
-      var positions = Type.position.positions;
-      if (!positions) positions = Type.position.positions = {left: 1, top: 1, bottom: 1, right: 1, center: 1}
-      return positions[obj]
-    },
-    
-    percentage: function(obj) {
-      return obj.unit == '%'
-    }
-  };
-  
-})(typeof exports != 'undefined' ? exports : this);
-/*
----
-name    : SheetParser.Styles
-
-authors   : Yaroslaff Fedin
-
-license   : MIT
-
-requires : SheetParser.Property
-
-provides : SheetParser.Styles
-...
-*/
-
-(function() {
-   
-var SheetParser = (typeof exports == 'undefined') ? window.SheetParser : exports.SheetParser;
-var CSS = SheetParser.Properties = {
-  background:           [[['backgroundColor', 'backgroundImage', 'backgroundRepeat', 
-                          'backgroundAttachment', 'backgroundPositionX', 'backgroundPositionY']], 'multiple'],
-  backgroundColor:      ['color', 'transparent', 'inherit'],
-  backgroundImage:      ['url', 'none', 'inherit'],
-  backgroundRepeat:     ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'inherit', 'space', 'round'],
-  backgroundAttachment: ['fixed', 'scroll', 'inherit', 'local', 'fixed'],
-  backgroundPosition:   [['backgroundPositionX', 'backgroundPositionY']],
-  backgroundPositionX:  ['percentage', 'center', 'left', 'right', 'length', 'inherit'],
-  backgroundPositionY:  ['percentage', 'center', 'top', 'bottom', 'length', 'inherit'],
-   
-  textShadow:           [['textShadowBlur', 'textShadowOffsetX', 'textShadowOffsetY', 'textShadowColor'], 'multiple'],
-  textShadowBlur:       ['length'],
-  textShadowOffsetX:    ['length'],
-  textShadowOffsetY:    ['length'],
-  textShadowColor:      ['color'],
-                        
-  boxShadow:            [['boxShadowBlur', 'boxShadowOffsetX', 'boxShadowOffsetY', 'boxShadowColor'], 'multiple'],
-  boxShadowBlur:        ['length'],
-  boxShadowOffsetX:     ['length'],
-  boxShadowOffsetY:     ['length'],
-  boxShadowColor:       ['color'], 
-  
-  outline:              ['outlineWidth', 'outlineStyle', 'outlineColor'],
-  outlineWidth:         ['length'],
-  outlineStyle:         ['dotted', 'dashed', 'solid', 'double', 'groove', 'reidge', 'inset', 'outset'],
-  outlineColor:         ['color'],
-                        
-  font:                 [[
-                          ['fontStyle', 'fontVariant', 'fontWeight'], 
-                          'fontSize', 
-                          ['lineHeight'], 
-                          'fontFamily'
-                        ]],
-  fontStyle:            ['normal', 'italic', 'oblique', 'inherit'],
-  fontVariant:          ['normal', 'small-caps', 'inherit'],
-  fontWeight:           ['normal', 'number', 'bold', 'inherit'],
-  fontFamily:           ['strings', 'inherit'],
-  fontSize:             ['length', 'percentage', 'inherit', 
-                         'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger'],
-                        
-  color:                ['color'],
-  letterSpacing:        ['normal', 'length', 'inherit'],
-  textDecoration:       ['none', 'capitalize', 'uppercase', 'lowercase'],
-  textAlign:            ['left', 'right', 'center', 'justify'],
-  textIdent:            ['length', 'percentage'],                 
-  lineHeight:           ['normal', 'length', 'number', 'percentage'],
-  
-  height:               ['length', 'auto'],
-  maxHeight:            ['length', 'auto'],
-  minHeight:            ['length', 'auto'],
-  width:                ['length', 'auto'],
-  maxWidth:             ['length', 'auto'],
-  minWidth:             ['length', 'auto'],
-                        
-  display:              ['inline', 'block', 'list-item', 'run-in', 'inline-block', 'table', 'inline-table', 'none', 
-                         'table-row-group', 'table-header-group', 'table-footer-group', 'table-row', 
-                         'table-column-group', 'table-column', 'table-cell', 'table-caption'],
-  visibility:           ['visible', 'hidden'],
-  'float':              ['none', 'left', 'right'],
-  clear:                ['none', 'left', 'right', 'both', 'inherit'],
-  overflow:             ['visible', 'hidden', 'scroll', 'auto'],
-  position:             ['static', 'relative', 'absolute', 'fixed'],
-  top:                  ['length', 'auto'],
-  left:                 ['length', 'auto'],
-  right:                ['length', 'auto'],
-  bottom:               ['length', 'auto'],
-  zIndex:               ['integer'],
-  cursor:               ['auto', 'crosshair', 'default', 'hand', 'move', 'e-resize', 'ne-resize', 'nw-resize', 
-                         'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'text', 'wait', 'help']
-};
-
-var expanded = ['borderWidth', 'borderColor', 'borderStyle', 'padding', 'margin', 'border'];
-for (var side, sides = ['Top', 'Right', 'Bottom', 'Left'], i = 0; side = sides[i++];) {
-  CSS['border' + side]           = [['border' + side + 'Width', 'border' + side + 'Style', 'border' + side + 'Color']];
-  
-  CSS['border' + side + 'Width'] = ['length', 'thin', 'thick', 'medium'];
-  CSS['border' + side + 'Style'] = ['none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'inherit', 'none'];
-  CSS['border' + side + 'Color'] = ['color'];
-  
-  CSS['margin' + side]           = ['length', 'percentage', 'auto'];
-  CSS['padding' + side]          = ['length', 'percentage', 'auto'];
-
-  for (var j = 0, prop; prop = expanded[j++];) {
-    if (!CSS[prop]) CSS[prop] = [[]];
-    CSS[prop][0].push(prop.replace(/^([a-z]*)/, '$1' + side));
-    if (i == 4) CSS[prop].push('collection')
-  }
-
-  if (i % 2 == 0) 
-    for (var j = 1, adj; adj = sides[j+=2];) 
-      CSS['borderRadius' + side + adj] = ['length', 'none'];
-};
-
-var Styles = SheetParser.Styles = {}
-for (var property in CSS) Styles[property] = SheetParser.Property.compile(CSS[property], Styles);
-
-})();
 /*
 ---
 name    : SheetParser.Value
@@ -8688,6 +8346,348 @@ LSD.Options.mutations = {
   remove: 'removeMutation',
   iterate: true
 };
+/*
+---
+name    : SheetParser.Property
+
+authors   : Yaroslaff Fedin
+
+license   : MIT
+
+requires : SheetParser.CSS
+
+provides : SheetParser.Property
+...
+*/
+
+
+(function(exports) {
+  /*<CommonJS>*/
+  var combineRegExp = (typeof require == 'undefined')
+    ?  exports.combineRegExp
+    :  require('./sg-regex-tools').combineRegExp
+  var SheetParser = exports.SheetParser
+  /*</CommonJS>*/
+  
+  var Property = SheetParser.Property = {version: '0.2 dev'};
+  
+  /*
+    Finds optional groups in expressions and builds keyword
+    indecies for them. Keyword index is an object that has
+    keywords as keys and values as property names.
+    
+    Index only holds keywords that can be uniquely identified
+    as one of the properties in group.
+  */
+  
+  Property.index = function(properties, context) {
+    var index = {};
+    for (var i = 0, property; property = properties[i]; i++) {
+      if (property.push) {
+        var group = index[i] = {};
+        for (var j = 0, prop; prop = property[j]; j++) {
+          var keys = context[prop].keywords;
+          if (keys) for (var key in keys) {
+            if (group[key] == null) group[key] = prop;
+            else group[key] = false;
+          }
+        }
+        for (var keyword in group) if (!group[keyword]) delete group[keyword];
+      }
+    }
+    return index;
+  };
+  
+  /*
+    Simple value 
+  */
+
+  Property.simple = function(types, keywords) {
+    return function(value) {
+      if (keywords && keywords[value]) return true;
+      if (types) for (var i = 0, type; type = types[i++];) if (Type[type](value)) return true;
+      return false;
+    }
+  };
+  
+  /*
+    Links list of inambigous arguments with corresponding properties keeping
+    the order.
+  */
+  
+  Property.shorthand = function(properties, keywords, context) {
+    var index, r = 0;
+    for (var i = 0, property; property = properties[i++];) if (!property.push) r++;
+    return function() {
+      var result = [], used = {}, start = 0, group, k = 0, l = arguments.length;
+      for (var i = 0, argument; argument = arguments[i]; i++) {
+        var property = properties[k];
+        if (!property) return false;
+        if ((group = (property.push && property))) property = properties[k + 1];
+        if (property) {
+          if (context[property](argument)) k++
+          else property = false
+        }
+        if (group) {
+          if (!property) {
+            if (!index) index = Property.index(properties, context)
+            if (property = index[k][argument])
+              if (used[property]) return false;
+              else used[property] = 1;
+          }
+          if ((property && !used[property]) || (i == l - 1)) {
+            if (i - start > group.length) return false;
+            for (var j = start; j < (i + +!property); j++) 
+              if (!result[j])
+                for (var m = 0, optional; optional = group[m++];) {
+                  if (!used[optional] && context[optional](arguments[j])) {
+                    result[j] = optional;
+                    used[optional] = true
+                    break;
+                  }
+                }
+            start = i;
+            k++;
+          }
+        }
+        if (result[i] == null) result[i] = property;
+      }
+      if (i < r) return false
+      for (var i = 0, j = arguments.length, object = {}; i < j; i++) {
+        var value = result[i];
+        if (!value) return false;
+        object[value] = arguments[i];
+      }
+      return object;
+    };
+  }
+
+  /*
+    A shorthand that operates on collection of properties. When given values
+    are not enough (less than properties in collection), the value sequence
+    is repeated until all properties are filled.     
+  */
+
+  Property.collection = function(properties, keywords, context) {
+    var first = context[properties[0]];
+    if (first.type != 'simple') 
+      return function(arg) {
+        var args = (!arg || !arg.push) ? [Array.prototype.slice.call(arguments)] : arguments;
+        var length = args.length;
+        var result = {};
+        for (var i = 0, property; property = properties[i]; i++) {
+          var values = context[property].apply(1, args[i] || args[i % 2] || args[0]);
+          if (!values) return false;
+          for (var prop in values) result[prop] = values[prop];
+        }
+        return result;
+      }
+    else
+      return function() {
+        var length = arguments.length;
+        var result = {};
+        for (var i = 0, property; property = properties[i]; i++) {
+          var values = arguments[i] || arguments[i % 2] || arguments[0];
+          if (!context[property].call(1, values)) return false;
+          result[property] = values;
+        }
+        return result;
+      }
+  };
+  
+  /* 
+    Multiple value property accepts arrays as arguments
+    as well as regular stuff
+  */
+  
+  Property.multiple = function(arg) {
+    //if (arg.push)
+  }
+  
+  Property.compile = function(definition, context) {
+    var properties, keywords, types;
+    for (var i = 0, bit; bit = definition[i++];) {
+      if (bit.push) properties = bit;
+      else if (bit.indexOf) {
+        if (!Type[bit]) {
+          if (!keywords) keywords = {};
+          keywords[bit] = 1;
+        } else types ? types.push(bit) : (types = [bit]);
+      } else options = bit;
+    }
+    var type = properties ? (keywords && keywords.collection ? "collection" : "shorthand") : 'simple'
+    var property = Property[type](properties || types, keywords, context);
+    if (keywords) property.keywords = keywords;
+    if (properties) {
+      var props = [];
+      for (var i = 0, prop; prop = properties[i++];) prop.push ? props.push.apply(props, prop) : props.push(prop);
+      property.properties = props;
+    }
+    property.type = type;
+    return property;
+  };
+  
+  
+  var Type = Property.Type = {
+    length: function(obj) {
+      return typeof obj == 'number' || (!obj.indexOf && ('number' in obj) && obj.unit && (obj.unit != '%'))
+    },
+  
+    color: function(obj) {
+      return obj.indexOf ? obj.match(/^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/) : (obj.isColor || obj.rgba || obj.rgb || obj.hsb)
+    },
+    
+    number: function(obj) {
+      return typeof obj == 'number'
+    },
+    
+    integer: function(obj) {
+      return obj % 1 == 0 && ((0 + obj).toString() == obj)
+    },
+  
+    keyword: function(keywords) {
+      var storage;
+      for (var i = 0, keyword; keyword = keywords[i++];) storage[keyword] = 1;
+      return function(keyword) {
+        return !!storage[keyword]
+      }
+    },
+    
+    strings: function(obj) {
+      return !!obj.indexOf
+    },
+    
+    url: function(obj) {
+      return !obj.indexOf && ("url" in obj);
+    },
+    
+    position: function(obj) {        
+      var positions = Type.position.positions;
+      if (!positions) positions = Type.position.positions = {left: 1, top: 1, bottom: 1, right: 1, center: 1}
+      return positions[obj]
+    },
+    
+    percentage: function(obj) {
+      return obj.unit == '%'
+    }
+  };
+  
+})(typeof exports != 'undefined' ? exports : this);
+/*
+---
+name    : SheetParser.Styles
+
+authors   : Yaroslaff Fedin
+
+license   : MIT
+
+requires : SheetParser.Property
+
+provides : SheetParser.Styles
+...
+*/
+
+(function() {
+   
+var SheetParser = (typeof exports == 'undefined') ? window.SheetParser : exports.SheetParser;
+var CSS = SheetParser.Properties = {
+  background:           [[['backgroundColor', 'backgroundImage', 'backgroundRepeat', 
+                          'backgroundAttachment', 'backgroundPositionX', 'backgroundPositionY']], 'multiple'],
+  backgroundColor:      ['color', 'transparent', 'inherit'],
+  backgroundImage:      ['url', 'none', 'inherit'],
+  backgroundRepeat:     ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'inherit', 'space', 'round'],
+  backgroundAttachment: ['fixed', 'scroll', 'inherit', 'local', 'fixed'],
+  backgroundPosition:   [['backgroundPositionX', 'backgroundPositionY']],
+  backgroundPositionX:  ['percentage', 'center', 'left', 'right', 'length', 'inherit'],
+  backgroundPositionY:  ['percentage', 'center', 'top', 'bottom', 'length', 'inherit'],
+   
+  textShadow:           [['textShadowBlur', 'textShadowOffsetX', 'textShadowOffsetY', 'textShadowColor'], 'multiple'],
+  textShadowBlur:       ['length'],
+  textShadowOffsetX:    ['length'],
+  textShadowOffsetY:    ['length'],
+  textShadowColor:      ['color'],
+                        
+  boxShadow:            [['boxShadowBlur', 'boxShadowOffsetX', 'boxShadowOffsetY', 'boxShadowColor'], 'multiple'],
+  boxShadowBlur:        ['length'],
+  boxShadowOffsetX:     ['length'],
+  boxShadowOffsetY:     ['length'],
+  boxShadowColor:       ['color'], 
+  
+  outline:              ['outlineWidth', 'outlineStyle', 'outlineColor'],
+  outlineWidth:         ['length'],
+  outlineStyle:         ['dotted', 'dashed', 'solid', 'double', 'groove', 'reidge', 'inset', 'outset'],
+  outlineColor:         ['color'],
+                        
+  font:                 [[
+                          ['fontStyle', 'fontVariant', 'fontWeight'], 
+                          'fontSize', 
+                          ['lineHeight'], 
+                          'fontFamily'
+                        ]],
+  fontStyle:            ['normal', 'italic', 'oblique', 'inherit'],
+  fontVariant:          ['normal', 'small-caps', 'inherit'],
+  fontWeight:           ['normal', 'number', 'bold', 'inherit'],
+  fontFamily:           ['strings', 'inherit'],
+  fontSize:             ['length', 'percentage', 'inherit', 
+                         'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger'],
+                        
+  color:                ['color'],
+  letterSpacing:        ['normal', 'length', 'inherit'],
+  textDecoration:       ['none', 'capitalize', 'uppercase', 'lowercase'],
+  textAlign:            ['left', 'right', 'center', 'justify'],
+  textIdent:            ['length', 'percentage'],                 
+  lineHeight:           ['normal', 'length', 'number', 'percentage'],
+  
+  height:               ['length', 'auto'],
+  maxHeight:            ['length', 'auto'],
+  minHeight:            ['length', 'auto'],
+  width:                ['length', 'auto'],
+  maxWidth:             ['length', 'auto'],
+  minWidth:             ['length', 'auto'],
+                        
+  display:              ['inline', 'block', 'list-item', 'run-in', 'inline-block', 'table', 'inline-table', 'none', 
+                         'table-row-group', 'table-header-group', 'table-footer-group', 'table-row', 
+                         'table-column-group', 'table-column', 'table-cell', 'table-caption'],
+  visibility:           ['visible', 'hidden'],
+  'float':              ['none', 'left', 'right'],
+  clear:                ['none', 'left', 'right', 'both', 'inherit'],
+  overflow:             ['visible', 'hidden', 'scroll', 'auto'],
+  position:             ['static', 'relative', 'absolute', 'fixed'],
+  top:                  ['length', 'auto'],
+  left:                 ['length', 'auto'],
+  right:                ['length', 'auto'],
+  bottom:               ['length', 'auto'],
+  zIndex:               ['integer'],
+  cursor:               ['auto', 'crosshair', 'default', 'hand', 'move', 'e-resize', 'ne-resize', 'nw-resize', 
+                         'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'text', 'wait', 'help']
+};
+
+var expanded = ['borderWidth', 'borderColor', 'borderStyle', 'padding', 'margin', 'border'];
+for (var side, sides = ['Top', 'Right', 'Bottom', 'Left'], i = 0; side = sides[i++];) {
+  CSS['border' + side]           = [['border' + side + 'Width', 'border' + side + 'Style', 'border' + side + 'Color']];
+  
+  CSS['border' + side + 'Width'] = ['length', 'thin', 'thick', 'medium'];
+  CSS['border' + side + 'Style'] = ['none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'inherit', 'none'];
+  CSS['border' + side + 'Color'] = ['color'];
+  
+  CSS['margin' + side]           = ['length', 'percentage', 'auto'];
+  CSS['padding' + side]          = ['length', 'percentage', 'auto'];
+
+  for (var j = 0, prop; prop = expanded[j++];) {
+    if (!CSS[prop]) CSS[prop] = [[]];
+    CSS[prop][0].push(prop.replace(/^([a-z]*)/, '$1' + side));
+    if (i == 4) CSS[prop].push('collection')
+  }
+
+  if (i % 2 == 0) 
+    for (var j = 1, adj; adj = sides[j+=2];) 
+      CSS['borderRadius' + side + adj] = ['length', 'none'];
+};
+
+var Styles = SheetParser.Styles = {}
+for (var property in CSS) Styles[property] = SheetParser.Property.compile(CSS[property], Styles);
+
+})();
 /*
 ---
 name: Slick.Parser
@@ -11323,56 +11323,6 @@ extends: Core/Element
 }(Element.prototype.dispose, Element.prototype.replaces);
 /*
 ---
- 
-script: Element.from.js
- 
-description: Methods to create elements from strings
- 
-license: MIT-style license.
-
-credits: 
-  - http://jdbartlett.github.com/innershiv
- 
-requires:
-- Core/Element
- 
-provides: [Element.from, window.innerShiv, Elements.from, document.createFragment]
- 
-...
-*/
-
-document.createFragment = window.innerShiv = (function() {
-	var d, r;
-	
-	return function(h, u) {
-	  if (!d) {
-			d = document.createElement('div');
-			r = document.createDocumentFragment();
-			/*@cc_on d.style.display = 'none';@*/
-		}
-		
-		var e = d.cloneNode(true);
-		/*@cc_on document.body.appendChild(e);@*/
-		e.innerHTML = h.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-		/*@cc_on document.body.removeChild(e);@*/
-		
-		if (u === false) return e.childNodes;
-		
-		var f = r.cloneNode(true), i = e.childNodes.length;
-		while (i--) f.appendChild(e.firstChild);
-		
-		return f;
-	}
-}());
-
-Element.from = function(html) {
-  new Element(innerShiv(html, false)[0])
-};
-Elements.from = function(html) {
-  new Elements(innerShiv(html))
-};
-/*
----
 
 name: Element.Style
 
@@ -12473,6 +12423,1379 @@ Element.Properties.widget = {
 
 
 
+/*
+---
+
+name: Element.Event
+
+description: Contains Element methods for dealing with events. This file also includes mouseenter and mouseleave custom Element Events.
+
+license: MIT-style license.
+
+requires: [Element, Event]
+
+provides: Element.Event
+
+...
+*/
+
+(function(){
+
+Element.Properties.events = {set: function(events){
+	this.addEvents(events);
+}};
+
+[Element, Window, Document].invoke('implement', {
+
+	addEvent: function(type, fn){
+		var events = this.retrieve('events', {});
+		if (!events[type]) events[type] = {keys: [], values: []};
+		if (events[type].keys.contains(fn)) return this;
+		events[type].keys.push(fn);
+		var realType = type,
+			custom = Element.Events[type],
+			condition = fn,
+			self = this;
+		if (custom){
+			if (custom.onAdd) custom.onAdd.call(this, fn);
+			if (custom.condition){
+				condition = function(event){
+					if (custom.condition.call(this, event)) return fn.call(this, event);
+					return true;
+				};
+			}
+			realType = custom.base || realType;
+		}
+		var defn = function(){
+			return fn.call(self);
+		};
+		var nativeEvent = Element.NativeEvents[realType];
+		if (nativeEvent){
+			if (nativeEvent == 2){
+				defn = function(event){
+					event = new Event(event, self.getWindow());
+					if (condition.call(self, event) === false) event.stop();
+				};
+			}
+			this.addListener(realType, defn, arguments[2]);
+		}
+		events[type].values.push(defn);
+		return this;
+	},
+
+	removeEvent: function(type, fn){
+		var events = this.retrieve('events');
+		if (!events || !events[type]) return this;
+		var list = events[type];
+		var index = list.keys.indexOf(fn);
+		if (index == -1) return this;
+		var value = list.values[index];
+		delete list.keys[index];
+		delete list.values[index];
+		var custom = Element.Events[type];
+		if (custom){
+			if (custom.onRemove) custom.onRemove.call(this, fn);
+			type = custom.base || type;
+		}
+		return (Element.NativeEvents[type]) ? this.removeListener(type, value, arguments[2]) : this;
+	},
+
+	addEvents: function(events){
+		for (var event in events) this.addEvent(event, events[event]);
+		return this;
+	},
+
+	removeEvents: function(events){
+		var type;
+		if (typeOf(events) == 'object'){
+			for (type in events) this.removeEvent(type, events[type]);
+			return this;
+		}
+		var attached = this.retrieve('events');
+		if (!attached) return this;
+		if (!events){
+			for (type in attached) this.removeEvents(type);
+			this.eliminate('events');
+		} else if (attached[events]){
+			attached[events].keys.each(function(fn){
+				this.removeEvent(events, fn);
+			}, this);
+			delete attached[events];
+		}
+		return this;
+	},
+
+	fireEvent: function(type, args, delay){
+		var events = this.retrieve('events');
+		if (!events || !events[type]) return this;
+		args = Array.from(args);
+
+		events[type].keys.each(function(fn){
+			if (delay) fn.delay(delay, this, args);
+			else fn.apply(this, args);
+		}, this);
+		return this;
+	},
+
+	cloneEvents: function(from, type){
+		from = document.id(from);
+		var events = from.retrieve('events');
+		if (!events) return this;
+		if (!type){
+			for (var eventType in events) this.cloneEvents(from, eventType);
+		} else if (events[type]){
+			events[type].keys.each(function(fn){
+				this.addEvent(type, fn);
+			}, this);
+		}
+		return this;
+	}
+
+});
+
+Element.NativeEvents = {
+	click: 2, dblclick: 2, mouseup: 2, mousedown: 2, contextmenu: 2, //mouse buttons
+	mousewheel: 2, DOMMouseScroll: 2, //mouse wheel
+	mouseover: 2, mouseout: 2, mousemove: 2, selectstart: 2, selectend: 2, //mouse movement
+	keydown: 2, keypress: 2, keyup: 2, //keyboard
+	orientationchange: 2, // mobile
+	touchstart: 2, touchmove: 2, touchend: 2, touchcancel: 2, // touch
+	gesturestart: 2, gesturechange: 2, gestureend: 2, // gesture
+	focus: 2, blur: 2, change: 2, reset: 2, select: 2, submit: 2, //form elements
+	load: 2, unload: 1, beforeunload: 2, resize: 1, move: 1, DOMContentLoaded: 1, readystatechange: 1, //window
+	error: 1, abort: 1, scroll: 1 //misc
+};
+
+var check = function(event){
+	var related = event.relatedTarget;
+	if (related == null) return true;
+	if (!related) return false;
+	return (related != this && related.prefix != 'xul' && typeOf(this) != 'document' && !this.contains(related));
+};
+
+Element.Events = {
+
+	mouseenter: {
+		base: 'mouseover',
+		condition: check
+	},
+
+	mouseleave: {
+		base: 'mouseout',
+		condition: check
+	},
+
+	mousewheel: {
+		base: (Browser.firefox) ? 'DOMMouseScroll' : 'mousewheel'
+	}
+
+};
+
+//<1.2compat>
+
+Element.Events = new Hash(Element.Events);
+
+//</1.2compat>
+
+})();
+
+/*
+---
+ 
+script: DOM.js
+ 
+description: Provides DOM-compliant interface to play around with other widgets
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+
+requires:
+  - LSD.Module
+  - Core/Element.Event
+
+provides:
+  - LSD.Module.DOM
+  - LSD.Module.DOM.findDocument
+
+...
+*/
+
+!function() {
+
+LSD.Module.DOM = new Class({
+  options: {
+    nodeType: 1,
+  },
+  
+  initializers: {
+    dom: function(options) {
+      this.childNodes = [];
+      this.nodeType = options.nodeType;
+      this.nodeName = this.tagName = options.tag;
+      return {
+        events: {
+          element: {
+            /*
+            When dispose event comes from the element, 
+            it is is already removed from dom
+            */
+            'dispose': 'onElementDispose'
+          },
+          self: {
+            'destroy': function() {
+              if (this.parentNode) this.dispose();
+            },
+            'dispose': function() {
+              if (this.element.parentNode) this.element.dispose();
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  contains: function(element) {
+    while (element = element.parentNode) if (element == this) return true;
+    return false;
+  },
+  
+  getChildren: function() {
+    return this.childNodes;
+  },
+
+  getRoot: function() {
+    var widget = this;
+    while (widget.parentNode) widget = widget.parentNode;
+    return widget;
+  },
+  
+  setParent: function(widget){
+    widget = LSD.Module.DOM.find(widget);
+    this.parentNode = widget;
+    this.fireEvent('setParent', [widget, widget.document])
+    var siblings = widget.childNodes;
+    var length = siblings.length;
+    if (length == 1) widget.firstChild = this;
+    widget.lastChild = this;
+    var previous = siblings[length - 2];
+    if (previous) {
+      previous.nextSibling = this;
+      this.previousSibling = previous;
+    }
+  },
+  
+  unsetParent: function(widget) {
+    var parent = this.parentNode;
+    if (parent.firstChild == this) delete parent.firstChild;
+    if (parent.lastChild == this) delete parent.lastChild;
+    delete this.parentNode;
+  },
+  
+  appendChild: function(widget, adoption) {
+    this.childNodes.push(widget);
+    widget.setParent(this);
+    if (!widget.quiet && (adoption !== false) && this.toElement()) (adoption || function() {
+      this.element.appendChild(widget.toElement());
+    }).apply(this, arguments);
+    delete widget.quiet;
+    this.fireEvent('adopt', [widget]);
+    LSD.Module.DOM.walk(widget, function(node) {
+      this.dispatchEvent('nodeInserted', node);
+    }, this);
+    return true;
+  },
+  
+  removeChild: function(widget) {
+    LSD.Module.DOM.walk(widget, function(node) {
+      this.dispatchEvent('nodeRemoved', node);
+    }, this);
+    widget.unsetParent(this);
+    this.childNodes.erase(widget);
+  },
+  
+  insertBefore: function(insertion, element) {
+    return this.appendChild(insertion, function() {
+      if (element)
+        document.id(element.parentNode).insertBefore(document.id(insertion), document.id(element))
+      else
+        document.id(this).insertBefore(document.id(insertion))
+    }.bind(this));
+  },
+
+  extractDocument: function(widget) {
+    var element = widget.lsd ? widget.element : widget;
+    var isDocument = widget.documentElement || (instanceOf(widget, LSD.Document));
+    var parent = this.parentNode;
+    if (isDocument  // if document
+    || (parent && parent.dominjected) //already injected widget
+    || (widget.ownerDocument && (widget.ownerDocument.body == widget)) //body element
+    || element.offsetParent) { //element in dom (costy check)
+      return (parent && parent.document) || (isDocument ? widget : LSD.Module.DOM.findDocument(widget));
+    }
+  },
+  
+  setDocument: function(document) {
+    LSD.Module.DOM.walk(this, function(child) {
+      child.ownerDocument = child.document = document;
+      child.fireEvent('setDocument', document);
+      child.fireEvent('dominject', [child.element.parentNode, document]);
+      child.dominjected = true;
+    });
+    return this;
+  },
+  
+  inject: function(widget, where, quiet) {
+    if (!widget.lsd) {
+      var instance = LSD.Module.DOM.find(widget, true)
+      if (instance) widget = instance;
+    }
+    this.quiet = quiet || (widget.documentElement && this.element && this.element.parentNode);
+    if (where === false) widget.appendChild(this, false)
+    else if (!inserters[where || 'bottom'](widget.lsd ? this : this.toElement(), widget) && !quiet) return false;
+    if (quiet !== true || widget.document) {
+      var document = widget.document || (this.documentElement ? this : this.extractDocument(widget));
+      if (document) this.setDocument(document);
+    }
+    this.fireEvent('inject', this.parentNode);
+    return this;
+  },
+
+  grab: function(el, where){
+    inserters[where || 'bottom'](document.id(el, true), this);
+    return this;
+  },
+  
+  /*
+    Wrapper is where content nodes get appended. 
+    Defaults to this.element, but can be redefined
+    in other Modules or Traits (as seen in Container
+    module)
+  */
+  
+  getWrapper: function() {
+    return this.toElement();
+  },
+  
+  write: function(content) {
+    if (!content || !(content = content.toString())) return;
+    var wrapper = this.getWrapper();
+    if (this.written) for (var node; node = this.written.shift();) Element.dispose(node);
+    var fragment = document.createFragment(content);
+    this.written = Array.prototype.slice.call(fragment.childNodes, 0);
+    wrapper.appendChild(fragment);
+    this.fireEvent('write', [this.written])
+    this.innerText = wrapper.get('text').trim();
+    return this.written;
+  },
+
+  replaces: function(el){
+    this.inject(el, 'after');
+    el.dispose();
+    return this;
+  },
+  
+  onDOMInject: function(callback) {
+    if (this.document) callback.call(this, this.document.element) 
+    else this.addEvent('dominject', callback.bind(this))
+  },
+  
+  onElementDispose: function() {
+    if (this.parentNode) this.dispose();
+  },
+
+  dispose: function() {
+    var parent = this.parentNode;
+    if (!parent) return;
+    this.fireEvent('beforeDispose', parent);
+    parent.removeChild(this);
+    this.fireEvent('dispose', parent);
+    return this;
+  },
+  
+  onElementDispose: function() {
+    if (this.parentNode) this.dispose();
+  }
+});
+
+var inserters = {
+
+  before: function(context, element){
+    var parent = element.parentNode;
+    if (parent) return parent.insertBefore(context, element);
+  },
+
+  after: function(context, element){
+    var parent = element.parentNode;
+    if (parent) return parent.insertBefore(context, element.nextSibling);
+  },
+
+  bottom: function(context, element){
+    return element.appendChild(context);
+  },
+
+  top: function(context, element){
+    return element.insertBefore(context, element.firstChild);
+  }
+
+};
+
+Object.append(LSD.Module.DOM, {
+  walk: function(element, callback, bind, memo) {
+    var widget = element.lsd ? element : LSD.Module.DOM.find(element, true);
+    if (widget) {
+      var result = callback.call(bind || this, widget, memo);
+      if (result) (memo || (memo = [])).push(widget);
+    }
+    for (var nodes = element.childNodes, node, i = 0; node = nodes[i]; i++) 
+      if (node.nodeType == 1) LSD.Module.DOM.walk(node, callback, bind, memo); 
+    return memo;
+  },
+  
+  find: function(target, lazy) {
+    return target.lsd ? target : ((!lazy || target.uid) && Element[lazy ? 'retrieve' : 'get'](target, 'widget'));
+  },
+  
+  findDocument: function(target) {
+    if (target.documentElement) return target;
+    if (target.document && target.document.lsd) return target.document;
+    if (target.lsd) return;
+    var body = target.ownerDocument.body;
+    var document = (target != body) && Element.retrieve(body, 'widget');
+    while (!document && (target = target.parentNode)) {
+      var widget = Element.retrieve(target, 'widget')
+      if (widget) document = (widget instanceof LSD.Document) ? widget : widget.document;
+    }
+    return document;
+  },
+  
+  getID: function(target) {
+    if (target.lsd) {
+      return target.attributes.itemid;
+    } else {
+      return target.getAttribute('itemid');
+    }
+  }
+});
+
+}();
+/*
+---
+ 
+script: Render.js
+ 
+description: A module that provides rendering workflow
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Module.DOM
+
+provides: 
+  - LSD.Module.Render
+
+...
+*/
+
+
+
+LSD.Module.Render = new Class({
+  options: {
+    render: null
+  },
+  
+  initializers: {
+    render: function() {
+      this.redraws = 0;
+      this.dirty = true;
+      return {
+        events: {
+          stateChange: function() {
+            if (this.redraws > 0) this.refresh(true);
+          }
+        }
+      }
+    }
+  },
+  
+  render: function() {
+    if (!this.built) this.build();
+    delete this.halted;
+    this.redraws++;
+    this.fireEvent('render', arguments)
+    this.childNodes.each(function(child){
+      if (child.render) child.render();
+    });
+  },
+  
+  /*
+    Update marks widget as willing to render. That
+    can be followed by a call to *render* to trigger
+    redrawing mechanism. Otherwise, the widget stay 
+    marked and can be rendered together with ascendant 
+    widget.
+  */
+  
+  update: function(recursive) {
+    if (recursive) LSD.Module.DOM.walk(this, function(widget) {
+      widget.update();
+    });
+  },
+  
+  /*
+    Refresh updates and renders widget (or a widget tree 
+    if optional argument is true). It is a reliable way
+    to have all elements redrawn, but a costly too.
+    
+    Should be avoided when possible to let internals 
+    handle the rendering and avoid some unnecessary 
+    calculations.
+  */
+
+  refresh: function(recursive) {
+    this.update(recursive);
+    return this.render();
+  },
+  
+
+  /*
+    Halt marks widget as failed to render.
+    
+    Possible use cases:
+    
+    - Dimensions depend on child widgets that are not
+      rendered yet
+    - Dont let the widget render when it is not in DOM
+  */ 
+  halt: function() {
+    if (this.halted) return false;
+    this.halted = true;
+    return true;
+  }
+});
+/*
+---
+
+script: Proxies.js
+
+description: All visual rendering aspects under one umbrella
+
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Module.Layers
+  - LSD.Module.Render
+  - LSD.Module.Shape
+
+provides: 
+  - LSD.Module.Graphics
+
+...
+*/
+
+
+LSD.Module.Graphics = new Class({
+  Implements: [
+    LSD.Module.Layers, 
+    LSD.Module.Render, 
+    LSD.Module.Shape
+  ]
+});
+/*
+---
+ 
+script: Container.js
+ 
+description: Makes widget use container - wrapper around content setting
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Module.DOM
+
+provides:
+  - LSD.Module.Container
+ 
+...
+*/
+
+LSD.Module.Container = new Class({
+  options: {
+    container: {
+      enabled: true,
+      position: null,
+      inline: true,
+      attributes: {
+        'class': 'container'
+      }
+    },
+    
+    proxies: {
+      container: {
+        container: function() {
+          return $(this.getContainer()) //creates container, once condition is true
+        },
+        condition: function() {         //turned off by default
+          return false 
+        },      
+        priority: -1,                   //lowest priority
+        rewrite: false                  //does not rewrite parent
+      }
+    }
+  },
+  
+  getContainer: Macro.getter('container', function() {
+    var options = this.options.container;
+    if (!options.enabled) return;
+    var tag = options.tag || (options.inline ? 'span' : 'div');
+    return new Element(tag, options.attributes).inject(this.element, options.position);
+  }),
+  
+  getWrapper: function() {
+    return this.getContainer() || this.toElement();
+  }
+});
+/*
+---
+
+script: Proxies.js
+
+description: Dont adopt children, pass them to some other widget
+
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Module.DOM
+
+provides: 
+  - LSD.Module.Proxies
+
+...
+*/
+  
+LSD.Module.Proxies = new Class({
+  initializers: {
+    proxies: function() {
+      this.proxies = [];
+    }
+  },
+  
+  addProxy: function(name, proxy) {
+    for (var i = 0, other; (other = this.proxies[i]) && ((proxy.priority || 0) < (other.priority || 0)); i++);
+    this.proxies.splice(i, 0, proxy);
+  },
+  
+  removeProxy: function(name, proxy) {
+    this.proxies.erase(proxy);
+  },
+  
+  proxyChild: function(child) {
+    for (var i = 0, proxy; proxy = this.proxies[i++];) {
+      if (!proxy.condition.call(this, child)) continue;
+      var self = this;
+      var reinject = function(target) {
+        if (proxy.rewrite === false) {
+          self.appendChild(child, function() {
+            target.adopt(child);
+          });
+        } else {
+          child.inject(target);
+        }
+      };
+      var container = proxy.container;
+      if (container.call) {
+        if ((container = container.call(this, reinject))) reinject(container);
+      } else {
+        this.use(container, reinject)
+      }
+      return true;
+    }
+  },
+  
+  appendChild: function(widget, adoption) {
+    if (!adoption && this.canAppendChild && !this.canAppendChild(widget)) {
+      if (widget.parentNode) widget.dispose();
+      else if (widget.element.parentNode) widget.element.dispose();
+      return false;
+    }
+    return LSD.Module.DOM.prototype.appendChild.apply(this, arguments);
+  },
+  
+  canAppendChild: function(child) {
+    return !this.proxyChild(child);
+  }
+  
+});
+
+LSD.Options.proxies = {
+  add: 'addProxy',
+  remove: 'removeProxy',
+  iterate: true
+};
+/*
+---
+
+name: Element.defineCustomEvent
+
+description: Allows to create custom events based on other custom events.
+
+authors: Christoph Pojer (@cpojer)
+
+license: MIT-style license.
+
+requires: [Core/Element.Event]
+
+provides: Element.defineCustomEvent
+
+...
+*/
+
+(function(){
+
+[Element, Window, Document].invoke('implement', {hasEvent: function(event){
+	var events = this.retrieve('events'),
+		list = (events && events[event]) ? events[event].values : null;
+	if (list){
+		for (var i = list.length; i--;) if (i in list){
+			return true;
+		}
+	}
+	return false;
+}});
+
+var wrap = function(custom, method, extended, name){
+	method = custom[method];
+	extended = custom[extended];
+
+	return function(fn, customName){
+		if (!customName) customName = name;
+
+		if (extended && !this.hasEvent(customName)) extended.call(this, fn, customName);
+		if (method) method.call(this, fn, customName);
+	};
+};
+
+var inherit = function(custom, base, method, name){
+	return function(fn, customName){
+		base[method].call(this, fn, customName || name);
+		custom[method].call(this, fn, customName || name);
+	};
+};
+
+var events = Element.Events;
+
+Element.defineCustomEvent = function(name, custom){
+
+	var base = events[custom.base];
+
+	custom.onAdd = wrap(custom, 'onAdd', 'onSetup', name);
+	custom.onRemove = wrap(custom, 'onRemove', 'onTeardown', name);
+
+	events[name] = base ? Object.append({}, custom, {
+
+		base: base.base,
+
+		condition: function(event){
+			return (!base.condition || base.condition.call(this, event)) &&
+				(!custom.condition || custom.condition.call(this, event));
+		},
+
+		onAdd: inherit(custom, base, 'onAdd', name),
+		onRemove: inherit(custom, base, 'onRemove', name)
+
+	}) : custom;
+
+	return this;
+
+};
+
+var loop = function(name){
+	var method = 'on' + name.capitalize();
+	Element[name + 'CustomEvents'] = function(){
+		Object.each(events, function(event, name){
+			if (event[method]) event[method].call(event, name);
+		});
+	};
+	return loop;
+};
+
+loop('enable')('disable');
+
+})();
+
+/*
+---
+
+name: Touch
+
+description: Provides a custom touch event on mobile devices
+
+authors: Christoph Pojer (@cpojer)
+
+license: MIT-style license.
+
+requires: [Core/Element.Event, Custom-Event/Element.defineCustomEvent, Browser.Features.Touch]
+
+provides: Touch
+
+...
+*/
+
+(function(){
+
+var preventDefault = function(event){
+	event.preventDefault();
+};
+
+var disabled;
+
+Element.defineCustomEvent('touch', {
+
+	base: 'touchend',
+
+	condition: function(event){
+		if (disabled || event.targetTouches.length != 0) return false;
+
+		var touch = event.changedTouches[0],
+			target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+		do {
+			if (target == this) return true;
+		} while ((target = target.parentNode) && target);
+
+		return false;
+	},
+
+	onSetup: function(){
+		this.addEvent('touchstart', preventDefault);
+	},
+
+	onTeardown: function(){
+		this.removeEvent('touchstart', preventDefault);
+	},
+
+	onEnable: function(){
+		disabled = false;
+	},
+
+	onDisable: function(){
+		disabled = true;
+	}
+
+});
+
+})();
+
+/*
+---
+
+name: Click
+
+description: Provides a replacement for click events on mobile devices
+
+authors: Christoph Pojer (@cpojer)
+
+license: MIT-style license.
+
+requires: [Touch]
+
+provides: Click
+
+...
+*/
+
+if (Browser.Features.iOSTouch) (function(){
+
+var name = 'click';
+delete Element.NativeEvents[name];
+
+Element.defineCustomEvent(name, {
+
+	base: 'touch'
+
+});
+
+})();
+
+/*
+---
+
+name: Mouse
+
+description: Maps mouse events to their touch counterparts
+
+authors: Christoph Pojer (@cpojer)
+
+license: MIT-style license.
+
+requires: [Custom-Event/Element.defineCustomEvent, Browser.Features.Touch]
+
+provides: Mouse
+
+...
+*/
+
+if (!Browser.Features.Touch) (function(){
+
+var condition = function(event){
+  event.targetTouches = [];
+  event.changedTouches = event.touches = [{
+    pageX: event.page.x, pageY: event.page.y,
+    clientX: event.client.x, clientY: event.client.y
+  }];
+
+  return true;
+};
+
+var mouseup = function(e) {
+  var target = e.target;
+  while (target != this && (target = target.parentNode));
+  this.fireEvent(target ? 'touchend' : 'touchcancel', arguments);
+  document.removeEvent('mouseup', this.retrieve('touch:mouseup'));
+};
+
+Element.defineCustomEvent('touchstart', {
+
+  base: 'mousedown',
+
+  condition: function() {
+    var bound = this.retrieve('touch:mouseup');
+    if (!bound) {
+      bound = mouseup.bind(this);
+      this.store('touch:mouseup', bound);
+    }
+    document.addEvent('mouseup', bound);
+    return condition.apply(this, arguments);
+  }
+
+}).defineCustomEvent('touchmove', {
+
+  base: 'mousemove',
+
+  condition: condition
+
+});
+
+})();
+
+/*
+---
+ 
+script: Touchable.js
+ 
+description: A mousedown event that lasts even when you move your mouse over. 
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Mixin
+  - Mobile/Mouse
+  - Mobile/Click
+  - Mobile/Touch
+
+ 
+provides:   
+  - LSD.Mixin.Touchable
+ 
+...
+*/
+
+
+LSD.Mixin.Touchable = new Class({
+  behaviour: ':touchable',
+  
+  options: {
+    events: {
+      enabled: {
+        element: {
+          'touchstart': 'activate',
+          'touchend': 'deactivate',
+          'touchcancel': 'deactivate'
+        }
+      }
+    },
+    states: {
+      active: {
+        enabler: 'activate',
+        disabler: 'deactivate'
+      }
+    }
+  }
+});
+/*
+---
+
+name: DOMReady
+
+description: Contains the custom event domready.
+
+license: MIT-style license.
+
+requires: [Browser, Element, Element.Event]
+
+provides: [DOMReady, DomReady]
+
+...
+*/
+
+(function(window, document){
+
+var ready,
+	loaded,
+	checks = [],
+	shouldPoll,
+	timer,
+	testElement = document.createElement('div');
+
+var domready = function(){
+	clearTimeout(timer);
+	if (ready) return;
+	Browser.loaded = ready = true;
+	document.removeListener('DOMContentLoaded', domready).removeListener('readystatechange', check);
+	
+	document.fireEvent('domready');
+	window.fireEvent('domready');
+};
+
+var check = function(){
+	for (var i = checks.length; i--;) if (checks[i]()){
+		domready();
+		return true;
+	}
+	return false;
+};
+
+var poll = function(){
+	clearTimeout(timer);
+	if (!check()) timer = setTimeout(poll, 10);
+};
+
+document.addListener('DOMContentLoaded', domready);
+
+/*<ltIE8>*/
+// doScroll technique by Diego Perini http://javascript.nwbox.com/IEContentLoaded/
+// testElement.doScroll() throws when the DOM is not ready, only in the top window
+var doScrollWorks = function(){
+	try {
+		testElement.doScroll();
+		return true;
+	} catch (e){}
+	return false;
+}
+// If doScroll works already, it can't be used to determine domready
+//   e.g. in an iframe
+if (testElement.doScroll && !doScrollWorks()){
+	checks.push(doScrollWorks);
+	shouldPoll = true;
+}
+/*</ltIE8>*/
+
+if (document.readyState) checks.push(function(){
+	var state = document.readyState;
+	return (state == 'loaded' || state == 'complete');
+});
+
+if ('onreadystatechange' in document) document.addListener('readystatechange', check);
+else shouldPoll = true;
+
+if (shouldPoll) poll();
+
+Element.Events.domready = {
+	onAdd: function(fn){
+		if (ready) fn.call(this);
+	}
+};
+
+// Make sure that domready fires before load
+Element.Events.load = {
+	base: 'load',
+	onAdd: function(fn){
+		if (loaded && this == window) fn.call(this);
+	},
+	condition: function(){
+		if (this == window){
+			domready();
+			delete Element.Events.load;
+		}
+		return true;
+	}
+};
+
+// This is based on the custom load event
+window.addEvent('load', function(){
+	loaded = true;
+});
+
+})(window, document);
+
+/*
+---
+ 
+script: Application.js
+ 
+description: A class to handle execution and bootstraping of LSD
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - Core/DomReady
+  - Core/Options
+  - Core/Events
+  - More/String.QueryString
+  
+provides:
+  - LSD.Application
+ 
+...
+*/
+LSD.Application = new Class({
+  Implements: [Options, Events],
+  
+  options: {
+    method: 'augment'
+  },
+  
+  initialize: function(document, options) {
+    if (!LSD.application) LSD.application = this;
+    this.param = (location.search.length > 1) ? location.search.substr(1, location.search.length - 1).parseQueryString() : {}
+    if (document) this.element = document.id(document);
+    if (options) this.setOptions(options);
+    document.addEvent('domready', function() {
+      if (this.param.benchmark != null) console.profile();
+      this.setDocument(document);
+      if (this.param.benchmark != null) console.profileEnd();
+    }.bind(this));
+  },
+  
+  setHead: function(head) {
+    for (var i = 0, el, els = head.getElementsByTagName('meta'); el = els[i++];) {
+      var type = el.getAttribute('rel');
+      if (type) {
+        if (!this[type]) this[type] = {};
+        var content = el.getAttribute('content')
+        this[type][el.getAttribute('name')] = (content.charAt(0) =="{") ? JSON.decode(content) : content;
+      }
+    }
+  },
+  
+  setDocument: function(document) {
+    this.setHead(document.head);
+    var element = this.element = document.body;
+    this.setBody(document.body);
+  },
+  
+  setBody: function(element) {
+    this.fireEvent('beforeBody', element);
+    var body = this.body = new (this.getBodyClass(element))(element);
+    this.fireEvent('body', [body, element]);
+    return body;
+  },
+  
+  getBodyClass: function() {
+    return LSD.Element.find('body');
+  },
+  
+  getBody: function() {
+    return this.body;
+  },
+  
+  redirect: function(url) {
+    window.location.href = url;
+  }
+  
+});
+/*
+---
+
+name: History
+
+description: History Management via popstate or hashchange.
+
+authors: Christoph Pojer (@cpojer)
+
+license: MIT-style license.
+
+requires: [Core/Events, Core/Element.Event]
+
+provides: History
+
+...
+*/
+
+(function(){
+
+var events = Element.NativeEvents,
+	location = window.location,
+	base = location.pathname,
+	history = window.history,
+	hasPushState = ('pushState' in history),
+	event = hasPushState ? 'popstate' : 'hashchange';
+
+this.History = new new Class({
+
+	Implements: [Events],
+
+	initialize: hasPushState ? function(){
+		events[event] = 2;
+		window.addEvent(event, this.pop.bind(this));
+	} : function(){
+		events[event] = 1;
+		window.addEvent(event, this.pop.bind(this));
+
+		this.hash = location.hash;
+		var hashchange = ('onhashchange' in window);
+		if (!(hashchange && (document.documentMode === undefined || document.documentMode > 7)))
+			this.timer = this.check.periodical(200, this);
+	},
+
+	push: hasPushState ? function(url, title, state){
+		if (base && base != url) base = null;
+		
+		history.pushState(state || null, title || null, url);
+		this.onChange(url, state);
+	} : function(url){
+		location.hash = url;
+	},
+
+	replace: hasPushState ? function(url, title, state){
+		history.replaceState(state || null, title || null, url);
+	} : function(url){
+		this.hash = '#' + url;
+		this.push(url);
+	},
+
+	pop: hasPushState ? function(event){
+		var url = location.pathname;
+		if (url == base){
+			base = null;
+			return;
+		}
+		this.onChange(url, event.event.state);
+	} : function(){
+		var hash = location.hash;
+		if (this.hash == hash) return;
+
+		this.hash = hash;
+		this.onChange(hash.substr(1));
+	},
+
+	onChange: function(url, state){
+		this.fireEvent('change', [url, state || {}]);
+	},
+
+	back: function(){
+		history.back();
+	},
+
+	forward: function(){
+		history.forward();
+	},
+	
+	getPath: function(){
+		return hasPushState ? location.pathname : location.hash.substr(1);
+	},
+
+	hasPushState: function(){
+		return hasPushState;
+	},
+
+	check: function(){
+		if (this.hash != location.hash) this.pop();
+	}
+
+});
+
+}).call(this);
+
+/*
+---
+ 
+script: History.js
+ 
+description: History Action Management.
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Action
+  - History/History
+ 
+provides:
+  - LSD.Action.History
+ 
+...
+*/
+
+LSD.Action.History = LSD.Action.build({
+  enable: function(target, content) {
+    var url = target.getAttribute('src')|| target.getAttribute('action') || target.getAttribute('href');
+    History[content && typeof(content) == 'string' ? content : 'push'].apply(History, [url]);
+  }
+});
+/*
+---
+ 
+script: Element.from.js
+ 
+description: Methods to create elements from strings
+ 
+license: MIT-style license.
+
+credits: 
+  - http://jdbartlett.github.com/innershiv
+ 
+requires:
+- Core/Element
+ 
+provides: [Element.from, window.innerShiv, Elements.from, document.createFragment]
+ 
+...
+*/
+
+document.createFragment = window.innerShiv = (function() {
+	var d, r;
+	
+	return function(h, u) {
+	  if (!d) {
+			d = document.createElement('div');
+			r = document.createDocumentFragment();
+			/*@cc_on d.style.display = 'none';@*/
+		}
+		
+		var e = d.cloneNode(true);
+		/*@cc_on document.body.appendChild(e);@*/
+		e.innerHTML = h.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+		/*@cc_on document.body.removeChild(e);@*/
+		
+		if (u === false) return e.childNodes;
+		
+		var f = r.cloneNode(true), i = e.childNodes.length;
+		while (i--) f.appendChild(e.firstChild);
+		
+		return f;
+	}
+}());
+
+Element.from = function(html) {
+  new Element(innerShiv(html, false)[0])
+};
+Elements.from = function(html) {
+  new Elements(innerShiv(html))
+};
 /*
 ---
 
@@ -14082,1199 +15405,6 @@ LSD.Trait.Form = new Class({
 /*
 ---
 
-name: Element.Event
-
-description: Contains Element methods for dealing with events. This file also includes mouseenter and mouseleave custom Element Events.
-
-license: MIT-style license.
-
-requires: [Element, Event]
-
-provides: Element.Event
-
-...
-*/
-
-(function(){
-
-Element.Properties.events = {set: function(events){
-	this.addEvents(events);
-}};
-
-[Element, Window, Document].invoke('implement', {
-
-	addEvent: function(type, fn){
-		var events = this.retrieve('events', {});
-		if (!events[type]) events[type] = {keys: [], values: []};
-		if (events[type].keys.contains(fn)) return this;
-		events[type].keys.push(fn);
-		var realType = type,
-			custom = Element.Events[type],
-			condition = fn,
-			self = this;
-		if (custom){
-			if (custom.onAdd) custom.onAdd.call(this, fn);
-			if (custom.condition){
-				condition = function(event){
-					if (custom.condition.call(this, event)) return fn.call(this, event);
-					return true;
-				};
-			}
-			realType = custom.base || realType;
-		}
-		var defn = function(){
-			return fn.call(self);
-		};
-		var nativeEvent = Element.NativeEvents[realType];
-		if (nativeEvent){
-			if (nativeEvent == 2){
-				defn = function(event){
-					event = new Event(event, self.getWindow());
-					if (condition.call(self, event) === false) event.stop();
-				};
-			}
-			this.addListener(realType, defn, arguments[2]);
-		}
-		events[type].values.push(defn);
-		return this;
-	},
-
-	removeEvent: function(type, fn){
-		var events = this.retrieve('events');
-		if (!events || !events[type]) return this;
-		var list = events[type];
-		var index = list.keys.indexOf(fn);
-		if (index == -1) return this;
-		var value = list.values[index];
-		delete list.keys[index];
-		delete list.values[index];
-		var custom = Element.Events[type];
-		if (custom){
-			if (custom.onRemove) custom.onRemove.call(this, fn);
-			type = custom.base || type;
-		}
-		return (Element.NativeEvents[type]) ? this.removeListener(type, value, arguments[2]) : this;
-	},
-
-	addEvents: function(events){
-		for (var event in events) this.addEvent(event, events[event]);
-		return this;
-	},
-
-	removeEvents: function(events){
-		var type;
-		if (typeOf(events) == 'object'){
-			for (type in events) this.removeEvent(type, events[type]);
-			return this;
-		}
-		var attached = this.retrieve('events');
-		if (!attached) return this;
-		if (!events){
-			for (type in attached) this.removeEvents(type);
-			this.eliminate('events');
-		} else if (attached[events]){
-			attached[events].keys.each(function(fn){
-				this.removeEvent(events, fn);
-			}, this);
-			delete attached[events];
-		}
-		return this;
-	},
-
-	fireEvent: function(type, args, delay){
-		var events = this.retrieve('events');
-		if (!events || !events[type]) return this;
-		args = Array.from(args);
-
-		events[type].keys.each(function(fn){
-			if (delay) fn.delay(delay, this, args);
-			else fn.apply(this, args);
-		}, this);
-		return this;
-	},
-
-	cloneEvents: function(from, type){
-		from = document.id(from);
-		var events = from.retrieve('events');
-		if (!events) return this;
-		if (!type){
-			for (var eventType in events) this.cloneEvents(from, eventType);
-		} else if (events[type]){
-			events[type].keys.each(function(fn){
-				this.addEvent(type, fn);
-			}, this);
-		}
-		return this;
-	}
-
-});
-
-Element.NativeEvents = {
-	click: 2, dblclick: 2, mouseup: 2, mousedown: 2, contextmenu: 2, //mouse buttons
-	mousewheel: 2, DOMMouseScroll: 2, //mouse wheel
-	mouseover: 2, mouseout: 2, mousemove: 2, selectstart: 2, selectend: 2, //mouse movement
-	keydown: 2, keypress: 2, keyup: 2, //keyboard
-	orientationchange: 2, // mobile
-	touchstart: 2, touchmove: 2, touchend: 2, touchcancel: 2, // touch
-	gesturestart: 2, gesturechange: 2, gestureend: 2, // gesture
-	focus: 2, blur: 2, change: 2, reset: 2, select: 2, submit: 2, //form elements
-	load: 2, unload: 1, beforeunload: 2, resize: 1, move: 1, DOMContentLoaded: 1, readystatechange: 1, //window
-	error: 1, abort: 1, scroll: 1 //misc
-};
-
-var check = function(event){
-	var related = event.relatedTarget;
-	if (related == null) return true;
-	if (!related) return false;
-	return (related != this && related.prefix != 'xul' && typeOf(this) != 'document' && !this.contains(related));
-};
-
-Element.Events = {
-
-	mouseenter: {
-		base: 'mouseover',
-		condition: check
-	},
-
-	mouseleave: {
-		base: 'mouseout',
-		condition: check
-	},
-
-	mousewheel: {
-		base: (Browser.firefox) ? 'DOMMouseScroll' : 'mousewheel'
-	}
-
-};
-
-//<1.2compat>
-
-Element.Events = new Hash(Element.Events);
-
-//</1.2compat>
-
-})();
-
-/*
----
- 
-script: DOM.js
- 
-description: Provides DOM-compliant interface to play around with other widgets
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
-
-requires:
-  - LSD.Module
-  - Core/Element.Event
-
-provides:
-  - LSD.Module.DOM
-  - LSD.Module.DOM.findDocument
-
-...
-*/
-
-!function() {
-
-LSD.Module.DOM = new Class({
-  options: {
-    nodeType: 1,
-  },
-  
-  initializers: {
-    dom: function(options) {
-      this.childNodes = [];
-      this.nodeType = options.nodeType;
-      this.nodeName = this.tagName = options.tag;
-      return {
-        events: {
-          element: {
-            /*
-            When dispose event comes from the element, 
-            it is is already removed from dom
-            */
-            'dispose': 'onElementDispose'
-          },
-          self: {
-            'destroy': function() {
-              if (this.parentNode) this.dispose();
-            },
-            'dispose': function() {
-              if (this.element.parentNode) this.element.dispose();
-            }
-          }
-        }
-      }
-    }
-  },
-  
-  contains: function(element) {
-    while (element = element.parentNode) if (element == this) return true;
-    return false;
-  },
-  
-  getChildren: function() {
-    return this.childNodes;
-  },
-
-  getRoot: function() {
-    var widget = this;
-    while (widget.parentNode) widget = widget.parentNode;
-    return widget;
-  },
-  
-  setParent: function(widget){
-    widget = LSD.Module.DOM.find(widget);
-    this.parentNode = widget;
-    this.fireEvent('setParent', [widget, widget.document])
-    var siblings = widget.childNodes;
-    var length = siblings.length;
-    if (length == 1) widget.firstChild = this;
-    widget.lastChild = this;
-    var previous = siblings[length - 2];
-    if (previous) {
-      previous.nextSibling = this;
-      this.previousSibling = previous;
-    }
-  },
-  
-  unsetParent: function(widget) {
-    var parent = this.parentNode;
-    if (parent.firstChild == this) delete parent.firstChild;
-    if (parent.lastChild == this) delete parent.lastChild;
-    delete this.parentNode;
-  },
-  
-  appendChild: function(widget, adoption) {
-    this.childNodes.push(widget);
-    widget.setParent(this);
-    if (!widget.quiet && (adoption !== false) && this.toElement()) (adoption || function() {
-      this.element.appendChild(widget.toElement());
-    }).apply(this, arguments);
-    delete widget.quiet;
-    this.fireEvent('adopt', [widget]);
-    LSD.Module.DOM.walk(widget, function(node) {
-      this.dispatchEvent('nodeInserted', node);
-    }, this);
-    return true;
-  },
-  
-  removeChild: function(widget) {
-    LSD.Module.DOM.walk(widget, function(node) {
-      this.dispatchEvent('nodeRemoved', node);
-    }, this);
-    widget.unsetParent(this);
-    this.childNodes.erase(widget);
-  },
-  
-  insertBefore: function(insertion, element) {
-    return this.appendChild(insertion, function() {
-      if (element)
-        document.id(element.parentNode).insertBefore(document.id(insertion), document.id(element))
-      else
-        document.id(this).insertBefore(document.id(insertion))
-    }.bind(this));
-  },
-
-  extractDocument: function(widget) {
-    var element = widget.lsd ? widget.element : widget;
-    var isDocument = widget.documentElement || (instanceOf(widget, LSD.Document));
-    var parent = this.parentNode;
-    if (isDocument  // if document
-    || (parent && parent.dominjected) //already injected widget
-    || (widget.ownerDocument && (widget.ownerDocument.body == widget)) //body element
-    || element.offsetParent) { //element in dom (costy check)
-      return (parent && parent.document) || (isDocument ? widget : LSD.Module.DOM.findDocument(widget));
-    }
-  },
-  
-  setDocument: function(document) {
-    LSD.Module.DOM.walk(this, function(child) {
-      child.ownerDocument = child.document = document;
-      child.fireEvent('setDocument', document);
-      child.fireEvent('dominject', [child.element.parentNode, document]);
-      child.dominjected = true;
-    });
-    return this;
-  },
-  
-  inject: function(widget, where, quiet) {
-    if (!widget.lsd) {
-      var instance = LSD.Module.DOM.find(widget, true)
-      if (instance) widget = instance;
-    }
-    this.quiet = quiet || (widget.documentElement && this.element && this.element.parentNode);
-    if (where === false) widget.appendChild(this, false)
-    else if (!inserters[where || 'bottom'](widget.lsd ? this : this.toElement(), widget) && !quiet) return false;
-    if (quiet !== true || widget.document) {
-      var document = widget.document || (this.documentElement ? this : this.extractDocument(widget));
-      if (document) this.setDocument(document);
-    }
-    this.fireEvent('inject', this.parentNode);
-    return this;
-  },
-
-  grab: function(el, where){
-    inserters[where || 'bottom'](document.id(el, true), this);
-    return this;
-  },
-  
-  /*
-    Wrapper is where content nodes get appended. 
-    Defaults to this.element, but can be redefined
-    in other Modules or Traits (as seen in Container
-    module)
-  */
-  
-  getWrapper: function() {
-    return this.toElement();
-  },
-  
-  write: function(content) {
-    if (!content || !(content = content.toString())) return;
-    var wrapper = this.getWrapper();
-    if (this.written) for (var node; node = this.written.shift();) Element.dispose(node);
-    var fragment = document.createFragment(content);
-    this.written = Array.prototype.slice.call(fragment.childNodes, 0);
-    wrapper.appendChild(fragment);
-    this.fireEvent('write', [this.written])
-    this.innerText = wrapper.get('text').trim();
-    return this.written;
-  },
-
-  replaces: function(el){
-    this.inject(el, 'after');
-    el.dispose();
-    return this;
-  },
-  
-  onDOMInject: function(callback) {
-    if (this.document) callback.call(this, this.document.element) 
-    else this.addEvent('dominject', callback.bind(this))
-  },
-  
-  onElementDispose: function() {
-    if (this.parentNode) this.dispose();
-  },
-
-  dispose: function() {
-    var parent = this.parentNode;
-    if (!parent) return;
-    this.fireEvent('beforeDispose', parent);
-    parent.removeChild(this);
-    this.fireEvent('dispose', parent);
-    return this;
-  },
-  
-  onElementDispose: function() {
-    if (this.parentNode) this.dispose();
-  }
-});
-
-var inserters = {
-
-  before: function(context, element){
-    var parent = element.parentNode;
-    if (parent) return parent.insertBefore(context, element);
-  },
-
-  after: function(context, element){
-    var parent = element.parentNode;
-    if (parent) return parent.insertBefore(context, element.nextSibling);
-  },
-
-  bottom: function(context, element){
-    return element.appendChild(context);
-  },
-
-  top: function(context, element){
-    return element.insertBefore(context, element.firstChild);
-  }
-
-};
-
-Object.append(LSD.Module.DOM, {
-  walk: function(element, callback, bind, memo) {
-    var widget = element.lsd ? element : LSD.Module.DOM.find(element, true);
-    if (widget) {
-      var result = callback.call(bind || this, widget, memo);
-      if (result) (memo || (memo = [])).push(widget);
-    }
-    for (var nodes = element.childNodes, node, i = 0; node = nodes[i]; i++) 
-      if (node.nodeType == 1) LSD.Module.DOM.walk(node, callback, bind, memo); 
-    return memo;
-  },
-  
-  find: function(target, lazy) {
-    return target.lsd ? target : ((!lazy || target.uid) && Element[lazy ? 'retrieve' : 'get'](target, 'widget'));
-  },
-  
-  findDocument: function(target) {
-    if (target.documentElement) return target;
-    if (target.document && target.document.lsd) return target.document;
-    if (target.lsd) return;
-    var body = target.ownerDocument.body;
-    var document = (target != body) && Element.retrieve(body, 'widget');
-    while (!document && (target = target.parentNode)) {
-      var widget = Element.retrieve(target, 'widget')
-      if (widget) document = (widget instanceof LSD.Document) ? widget : widget.document;
-    }
-    return document;
-  },
-  
-  getID: function(target) {
-    if (target.lsd) {
-      return target.attributes.itemid;
-    } else {
-      return target.getAttribute('itemid');
-    }
-  }
-});
-
-}();
-/*
----
- 
-script: Render.js
- 
-description: A module that provides rendering workflow
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Module.DOM
-
-provides: 
-  - LSD.Module.Render
-
-...
-*/
-
-
-
-LSD.Module.Render = new Class({
-  options: {
-    render: null
-  },
-  
-  initializers: {
-    render: function() {
-      this.redraws = 0;
-      this.dirty = true;
-      return {
-        events: {
-          stateChange: function() {
-            if (this.redraws > 0) this.refresh(true);
-          }
-        }
-      }
-    }
-  },
-  
-  render: function() {
-    if (!this.built) this.build();
-    delete this.halted;
-    this.redraws++;
-    this.fireEvent('render', arguments)
-    this.childNodes.each(function(child){
-      if (child.render) child.render();
-    });
-  },
-  
-  /*
-    Update marks widget as willing to render. That
-    can be followed by a call to *render* to trigger
-    redrawing mechanism. Otherwise, the widget stay 
-    marked and can be rendered together with ascendant 
-    widget.
-  */
-  
-  update: function(recursive) {
-    if (recursive) LSD.Module.DOM.walk(this, function(widget) {
-      widget.update();
-    });
-  },
-  
-  /*
-    Refresh updates and renders widget (or a widget tree 
-    if optional argument is true). It is a reliable way
-    to have all elements redrawn, but a costly too.
-    
-    Should be avoided when possible to let internals 
-    handle the rendering and avoid some unnecessary 
-    calculations.
-  */
-
-  refresh: function(recursive) {
-    this.update(recursive);
-    return this.render();
-  },
-  
-
-  /*
-    Halt marks widget as failed to render.
-    
-    Possible use cases:
-    
-    - Dimensions depend on child widgets that are not
-      rendered yet
-    - Dont let the widget render when it is not in DOM
-  */ 
-  halt: function() {
-    if (this.halted) return false;
-    this.halted = true;
-    return true;
-  }
-});
-/*
----
-
-script: Proxies.js
-
-description: All visual rendering aspects under one umbrella
-
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Module.Layers
-  - LSD.Module.Render
-  - LSD.Module.Shape
-
-provides: 
-  - LSD.Module.Graphics
-
-...
-*/
-
-
-LSD.Module.Graphics = new Class({
-  Implements: [
-    LSD.Module.Layers, 
-    LSD.Module.Render, 
-    LSD.Module.Shape
-  ]
-});
-/*
----
- 
-script: Container.js
- 
-description: Makes widget use container - wrapper around content setting
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Module.DOM
-
-provides:
-  - LSD.Module.Container
- 
-...
-*/
-
-LSD.Module.Container = new Class({
-  options: {
-    container: {
-      enabled: true,
-      position: null,
-      inline: true,
-      attributes: {
-        'class': 'container'
-      }
-    },
-    
-    proxies: {
-      container: {
-        container: function() {
-          return $(this.getContainer()) //creates container, once condition is true
-        },
-        condition: function() {         //turned off by default
-          return false 
-        },      
-        priority: -1,                   //lowest priority
-        rewrite: false                  //does not rewrite parent
-      }
-    }
-  },
-  
-  getContainer: Macro.getter('container', function() {
-    var options = this.options.container;
-    if (!options.enabled) return;
-    var tag = options.tag || (options.inline ? 'span' : 'div');
-    return new Element(tag, options.attributes).inject(this.element, options.position);
-  }),
-  
-  getWrapper: function() {
-    return this.getContainer() || this.toElement();
-  }
-});
-/*
----
-
-script: Proxies.js
-
-description: Dont adopt children, pass them to some other widget
-
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Module.DOM
-
-provides: 
-  - LSD.Module.Proxies
-
-...
-*/
-  
-LSD.Module.Proxies = new Class({
-  initializers: {
-    proxies: function() {
-      this.proxies = [];
-    }
-  },
-  
-  addProxy: function(name, proxy) {
-    for (var i = 0, other; (other = this.proxies[i]) && ((proxy.priority || 0) < (other.priority || 0)); i++);
-    this.proxies.splice(i, 0, proxy);
-  },
-  
-  removeProxy: function(name, proxy) {
-    this.proxies.erase(proxy);
-  },
-  
-  proxyChild: function(child) {
-    for (var i = 0, proxy; proxy = this.proxies[i++];) {
-      if (!proxy.condition.call(this, child)) continue;
-      var self = this;
-      var reinject = function(target) {
-        if (proxy.rewrite === false) {
-          self.appendChild(child, function() {
-            target.adopt(child);
-          });
-        } else {
-          child.inject(target);
-        }
-      };
-      var container = proxy.container;
-      if (container.call) {
-        if ((container = container.call(this, reinject))) reinject(container);
-      } else {
-        this.use(container, reinject)
-      }
-      return true;
-    }
-  },
-  
-  appendChild: function(widget, adoption) {
-    if (!adoption && this.canAppendChild && !this.canAppendChild(widget)) {
-      if (widget.parentNode) widget.dispose();
-      else if (widget.element.parentNode) widget.element.dispose();
-      return false;
-    }
-    return LSD.Module.DOM.prototype.appendChild.apply(this, arguments);
-  },
-  
-  canAppendChild: function(child) {
-    return !this.proxyChild(child);
-  }
-  
-});
-
-LSD.Options.proxies = {
-  add: 'addProxy',
-  remove: 'removeProxy',
-  iterate: true
-};
-/*
----
-
-name: Element.defineCustomEvent
-
-description: Allows to create custom events based on other custom events.
-
-authors: Christoph Pojer (@cpojer)
-
-license: MIT-style license.
-
-requires: [Core/Element.Event]
-
-provides: Element.defineCustomEvent
-
-...
-*/
-
-(function(){
-
-[Element, Window, Document].invoke('implement', {hasEvent: function(event){
-	var events = this.retrieve('events'),
-		list = (events && events[event]) ? events[event].values : null;
-	if (list){
-		for (var i = list.length; i--;) if (i in list){
-			return true;
-		}
-	}
-	return false;
-}});
-
-var wrap = function(custom, method, extended, name){
-	method = custom[method];
-	extended = custom[extended];
-
-	return function(fn, customName){
-		if (!customName) customName = name;
-
-		if (extended && !this.hasEvent(customName)) extended.call(this, fn, customName);
-		if (method) method.call(this, fn, customName);
-	};
-};
-
-var inherit = function(custom, base, method, name){
-	return function(fn, customName){
-		base[method].call(this, fn, customName || name);
-		custom[method].call(this, fn, customName || name);
-	};
-};
-
-var events = Element.Events;
-
-Element.defineCustomEvent = function(name, custom){
-
-	var base = events[custom.base];
-
-	custom.onAdd = wrap(custom, 'onAdd', 'onSetup', name);
-	custom.onRemove = wrap(custom, 'onRemove', 'onTeardown', name);
-
-	events[name] = base ? Object.append({}, custom, {
-
-		base: base.base,
-
-		condition: function(event){
-			return (!base.condition || base.condition.call(this, event)) &&
-				(!custom.condition || custom.condition.call(this, event));
-		},
-
-		onAdd: inherit(custom, base, 'onAdd', name),
-		onRemove: inherit(custom, base, 'onRemove', name)
-
-	}) : custom;
-
-	return this;
-
-};
-
-var loop = function(name){
-	var method = 'on' + name.capitalize();
-	Element[name + 'CustomEvents'] = function(){
-		Object.each(events, function(event, name){
-			if (event[method]) event[method].call(event, name);
-		});
-	};
-	return loop;
-};
-
-loop('enable')('disable');
-
-})();
-
-/*
----
-
-name: Touch
-
-description: Provides a custom touch event on mobile devices
-
-authors: Christoph Pojer (@cpojer)
-
-license: MIT-style license.
-
-requires: [Core/Element.Event, Custom-Event/Element.defineCustomEvent, Browser.Features.Touch]
-
-provides: Touch
-
-...
-*/
-
-(function(){
-
-var preventDefault = function(event){
-	event.preventDefault();
-};
-
-var disabled;
-
-Element.defineCustomEvent('touch', {
-
-	base: 'touchend',
-
-	condition: function(event){
-		if (disabled || event.targetTouches.length != 0) return false;
-
-		var touch = event.changedTouches[0],
-			target = document.elementFromPoint(touch.clientX, touch.clientY);
-
-		do {
-			if (target == this) return true;
-		} while ((target = target.parentNode) && target);
-
-		return false;
-	},
-
-	onSetup: function(){
-		this.addEvent('touchstart', preventDefault);
-	},
-
-	onTeardown: function(){
-		this.removeEvent('touchstart', preventDefault);
-	},
-
-	onEnable: function(){
-		disabled = false;
-	},
-
-	onDisable: function(){
-		disabled = true;
-	}
-
-});
-
-})();
-
-/*
----
-
-name: Click
-
-description: Provides a replacement for click events on mobile devices
-
-authors: Christoph Pojer (@cpojer)
-
-license: MIT-style license.
-
-requires: [Touch]
-
-provides: Click
-
-...
-*/
-
-if (Browser.Features.iOSTouch) (function(){
-
-var name = 'click';
-delete Element.NativeEvents[name];
-
-Element.defineCustomEvent(name, {
-
-	base: 'touch'
-
-});
-
-})();
-
-/*
----
-
-name: Mouse
-
-description: Maps mouse events to their touch counterparts
-
-authors: Christoph Pojer (@cpojer)
-
-license: MIT-style license.
-
-requires: [Custom-Event/Element.defineCustomEvent, Browser.Features.Touch]
-
-provides: Mouse
-
-...
-*/
-
-if (!Browser.Features.Touch) (function(){
-
-var condition = function(event){
-  event.targetTouches = [];
-  event.changedTouches = event.touches = [{
-    pageX: event.page.x, pageY: event.page.y,
-    clientX: event.client.x, clientY: event.client.y
-  }];
-
-  return true;
-};
-
-var mouseup = function(e) {
-  var target = e.target;
-  while (target != this && (target = target.parentNode));
-  this.fireEvent(target ? 'touchend' : 'touchcancel', arguments);
-  document.removeEvent('mouseup', this.retrieve('touch:mouseup'));
-};
-
-Element.defineCustomEvent('touchstart', {
-
-  base: 'mousedown',
-
-  condition: function() {
-    var bound = this.retrieve('touch:mouseup');
-    if (!bound) {
-      bound = mouseup.bind(this);
-      this.store('touch:mouseup', bound);
-    }
-    document.addEvent('mouseup', bound);
-    return condition.apply(this, arguments);
-  }
-
-}).defineCustomEvent('touchmove', {
-
-  base: 'mousemove',
-
-  condition: condition
-
-});
-
-})();
-
-/*
----
- 
-script: Touchable.js
- 
-description: A mousedown event that lasts even when you move your mouse over. 
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Mixin
-  - Mobile/Mouse
-  - Mobile/Click
-  - Mobile/Touch
-
- 
-provides:   
-  - LSD.Mixin.Touchable
- 
-...
-*/
-
-
-LSD.Mixin.Touchable = new Class({
-  behaviour: ':touchable',
-  
-  options: {
-    events: {
-      enabled: {
-        element: {
-          'touchstart': 'activate',
-          'touchend': 'deactivate',
-          'touchcancel': 'deactivate'
-        }
-      }
-    },
-    states: {
-      active: {
-        enabler: 'activate',
-        disabler: 'deactivate'
-      }
-    }
-  }
-});
-/*
----
-
-name: DOMReady
-
-description: Contains the custom event domready.
-
-license: MIT-style license.
-
-requires: [Browser, Element, Element.Event]
-
-provides: [DOMReady, DomReady]
-
-...
-*/
-
-(function(window, document){
-
-var ready,
-	loaded,
-	checks = [],
-	shouldPoll,
-	timer,
-	testElement = document.createElement('div');
-
-var domready = function(){
-	clearTimeout(timer);
-	if (ready) return;
-	Browser.loaded = ready = true;
-	document.removeListener('DOMContentLoaded', domready).removeListener('readystatechange', check);
-	
-	document.fireEvent('domready');
-	window.fireEvent('domready');
-};
-
-var check = function(){
-	for (var i = checks.length; i--;) if (checks[i]()){
-		domready();
-		return true;
-	}
-	return false;
-};
-
-var poll = function(){
-	clearTimeout(timer);
-	if (!check()) timer = setTimeout(poll, 10);
-};
-
-document.addListener('DOMContentLoaded', domready);
-
-/*<ltIE8>*/
-// doScroll technique by Diego Perini http://javascript.nwbox.com/IEContentLoaded/
-// testElement.doScroll() throws when the DOM is not ready, only in the top window
-var doScrollWorks = function(){
-	try {
-		testElement.doScroll();
-		return true;
-	} catch (e){}
-	return false;
-}
-// If doScroll works already, it can't be used to determine domready
-//   e.g. in an iframe
-if (testElement.doScroll && !doScrollWorks()){
-	checks.push(doScrollWorks);
-	shouldPoll = true;
-}
-/*</ltIE8>*/
-
-if (document.readyState) checks.push(function(){
-	var state = document.readyState;
-	return (state == 'loaded' || state == 'complete');
-});
-
-if ('onreadystatechange' in document) document.addListener('readystatechange', check);
-else shouldPoll = true;
-
-if (shouldPoll) poll();
-
-Element.Events.domready = {
-	onAdd: function(fn){
-		if (ready) fn.call(this);
-	}
-};
-
-// Make sure that domready fires before load
-Element.Events.load = {
-	base: 'load',
-	onAdd: function(fn){
-		if (loaded && this == window) fn.call(this);
-	},
-	condition: function(){
-		if (this == window){
-			domready();
-			delete Element.Events.load;
-		}
-		return true;
-	}
-};
-
-// This is based on the custom load event
-window.addEvent('load', function(){
-	loaded = true;
-});
-
-})(window, document);
-
-/*
----
- 
-script: Application.js
- 
-description: A class to handle execution and bootstraping of LSD
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - Core/DomReady
-  - Core/Options
-  - Core/Events
-  - More/String.QueryString
-  
-provides:
-  - LSD.Application
- 
-...
-*/
-LSD.Application = new Class({
-  Implements: [Options, Events],
-  
-  options: {
-    method: 'augment'
-  },
-  
-  initialize: function(document, options) {
-    if (!LSD.application) LSD.application = this;
-    this.param = (location.search.length > 1) ? location.search.substr(1, location.search.length - 1).parseQueryString() : {}
-    if (document) this.element = document.id(document);
-    if (options) this.setOptions(options);
-    document.addEvent('domready', function() {
-      if (this.param.benchmark != null) console.profile();
-      this.setDocument(document);
-      if (this.param.benchmark != null) console.profileEnd();
-    }.bind(this));
-  },
-  
-  setHead: function(head) {
-    for (var i = 0, el, els = head.getElementsByTagName('meta'); el = els[i++];) {
-      var type = el.getAttribute('rel');
-      if (type) {
-        if (!this[type]) this[type] = {};
-        var content = el.getAttribute('content')
-        this[type][el.getAttribute('name')] = (content.charAt(0) =="{") ? JSON.decode(content) : content;
-      }
-    }
-  },
-  
-  setDocument: function(document) {
-    this.setHead(document.head);
-    var element = this.element = document.body;
-    this.setBody(document.body);
-  },
-  
-  setBody: function(element) {
-    this.fireEvent('beforeBody', element);
-    var body = this.body = new (this.getBodyClass(element))(element);
-    this.fireEvent('body', [body, element]);
-    return body;
-  },
-  
-  getBodyClass: function() {
-    return LSD.Element.find('body');
-  },
-  
-  getBody: function() {
-    return this.body;
-  },
-  
-  redirect: function(url) {
-    window.location.href = url;
-  }
-  
-});
-/*
----
-
 script: URI.js
 
 name: URI
@@ -16764,6 +16894,180 @@ LSD.Widget.prototype.addStates('disabled', 'hidden', 'built', 'attached');
 new LSD.Type('Widget');
 /*
 ---
+ 
+script: Native.js
+ 
+description: Wrapper for native browser controls
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD.Widget
+
+provides: 
+  - LSD.Native
+ 
+...
+*/
+
+LSD.Native = new Class({
+  Extends: LSD.Widget,
+  options: {
+    inline: null //use widget tag when no element tag specified
+  }
+});
+new LSD.Type('Native');
+
+// Inject native widgets into default widget pool as a fallback
+LSD.Element.pool[LSD.useNative ? 'unshift' : 'push'](LSD.Native);
+/*
+---
+ 
+script: Anchor.js
+ 
+description: A link that does requests and actions
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD/LSD.Native
+  - LSD/LSD.Module.Accessories
+  - LSD/LSD.Module.Layout
+  - LSD/LSD.Mixin.Dialog
+  - LSD/LSD.Mixin.Request
+
+provides: 
+  - LSD.Native.Anchor
+ 
+...
+*/
+
+LSD.Native.Anchor = new Class({
+  Includes: [
+    LSD.Module.Accessories,
+    LSD.Module.Behavior,
+    LSD.Module.Layout,
+    LSD.Mixin.Request,
+    LSD.Mixin.Dialog
+  ],
+  
+  options: {
+    request: {
+      type: 'form'
+    },
+    layout: {
+      render: false,
+      extract: true
+    }
+  },
+
+  click: function(event) {
+    if (event && event.preventDefault) event.preventDefault();
+    if (!this.disabled) return this.parent.apply(this, arguments);
+  },
+
+  initialize: LSD.Module.Options.initialize
+
+});
+
+LSD.Native.Anchor.prototype.addStates('disabled', 'built', 'attached');
+/*
+---
+ 
+script: Form.js
+ 
+description: A form widgets. Intended to be submitted.
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD/LSD.Native
+  - LSD/LSD.Trait.Form
+  - LSD/LSD.Trait.Fieldset
+
+provides: 
+  - LSD.Native.Form
+ 
+...
+*/
+
+LSD.Native.Form = new Class({
+  Includes: [
+    LSD.Native,
+    LSD.Trait.Fieldset,
+    LSD.Trait.Form
+  ],
+  
+  options: {
+    tag: 'form',
+    events: {
+      element: {
+        submit: 'submit'
+      },
+      self: {
+        build: function() {
+          // novalidate html attribute disables internal form validation 
+          // on form submission. Chrome and Safari will block form 
+          // submission without any visual clues otherwise.
+          if (this.element.get('tag') == 'form') this.element.setProperty('novalidate', true);
+        }
+      }
+    }
+  }
+});
+/*
+---
+ 
+script: Button.js
+ 
+description: A button widget. You click it, it fires the event
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires:
+  - LSD/LSD.Native
+  - LSD/LSD.Mixin.Touchable
+
+provides: 
+  - LSD.Native.Button
+ 
+...
+*/
+LSD.Native.Button = new Class({
+
+  Extends: LSD.Native,
+
+  options: {
+    tag: 'button',
+    element: {
+      tag: 'a'
+    },
+    events: {
+      _button: {
+        element: {
+          click: 'click'
+        }
+      }
+    },
+    pseudos: Array.fast('touchable')
+  },
+  
+  click: function(event) {
+    if (event && event.preventDefault) event.preventDefault();
+    if (!this.disabled) return this.parent.apply(this, arguments);
+  }
+});
+
+/*
+---
 
 script: Document.js
 
@@ -16858,139 +17162,6 @@ LSD.document = {};
 /*
 ---
  
-script: Resizable.js
- 
-description: Document that redraws children when window gets resized.
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires: 
-  - LSD.Document
-  - LSD.Module.Layout
-  - LSD.Module.Events
-  - Core/Element.Dimensions
- 
-provides:
-  - LSD.Document.Resizable
- 
-...
-*/
-
-LSD.Document.Resizable = new Class({
-	
-	options: {
-  	events: {
-  	  _resizable: {
-  	    window: {
-  	      resize: 'onResize'
-  	    },
-  	    self: {
-  	      build: 'onResize'
-  	    }
-  	  }
-  	},
-  	root: true
-  },
-	
-	onResize: function() {
-	  if (document.getCoordinates) Object.append(this.style.current, document.getCoordinates());
-	  this.render()
-	},
-	
-	render: function() {
-		this.childNodes.each(function(child){
-		  if (child.refresh) child.refresh();
-		});
-	}
-});
-/*
----
- 
-script: Native.js
- 
-description: Wrapper for native browser controls
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD.Widget
-
-provides: 
-  - LSD.Native
- 
-...
-*/
-
-LSD.Native = new Class({
-  Extends: LSD.Widget,
-  options: {
-    inline: null //use widget tag when no element tag specified
-  }
-});
-new LSD.Type('Native');
-
-// Inject native widgets into default widget pool as a fallback
-LSD.Element.pool[LSD.useNative ? 'unshift' : 'push'](LSD.Native);
-/*
----
- 
-script: Anchor.js
- 
-description: A link that does requests and actions
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD/LSD.Native
-  - LSD/LSD.Module.Accessories
-  - LSD/LSD.Module.Layout
-  - LSD/LSD.Mixin.Dialog
-  - LSD/LSD.Mixin.Request
-
-provides: 
-  - LSD.Native.Anchor
- 
-...
-*/
-
-LSD.Native.Anchor = new Class({
-  Includes: [
-    LSD.Module.Accessories,
-    LSD.Module.Behavior,
-    LSD.Module.Layout,
-    LSD.Mixin.Request,
-    LSD.Mixin.Dialog
-  ],
-  
-  options: {
-    request: {
-      type: 'form'
-    },
-    layout: {
-      render: false,
-      extract: true
-    }
-  },
-
-  click: function(event) {
-    if (event && event.preventDefault) event.preventDefault();
-    if (!this.disabled) return this.parent.apply(this, arguments);
-  },
-
-  initialize: LSD.Module.Options.initialize
-
-});
-
-LSD.Native.Anchor.prototype.addStates('disabled', 'built', 'attached');
-/*
----
- 
 script: Commands.js
  
 description: Document catches the clicks and creates pseudo-widgets on demand
@@ -17042,6 +17213,56 @@ LSD.Document.Commands = new Class({
 /*
 ---
  
+script: Resizable.js
+ 
+description: Document that redraws children when window gets resized.
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Yaroslaff Fedin
+ 
+requires: 
+  - LSD.Document
+  - LSD.Module.Layout
+  - LSD.Module.Events
+  - Core/Element.Dimensions
+ 
+provides:
+  - LSD.Document.Resizable
+ 
+...
+*/
+
+LSD.Document.Resizable = new Class({
+	
+	options: {
+  	events: {
+  	  _resizable: {
+  	    window: {
+  	      resize: 'onResize'
+  	    },
+  	    self: {
+  	      build: 'onResize'
+  	    }
+  	  }
+  	},
+  	root: true
+  },
+	
+	onResize: function() {
+	  if (document.getCoordinates) Object.append(this.style.current, document.getCoordinates());
+	  this.render()
+	},
+	
+	render: function() {
+		this.childNodes.each(function(child){
+		  if (child.refresh) child.refresh();
+		});
+	}
+});
+/*
+---
+ 
 script: Body.js
  
 description: Lightweight document body wrapper
@@ -17070,52 +17291,6 @@ LSD.Native.Body = new Class({
   ],
   
   getSelector: false
-});
-/*
----
- 
-script: Form.js
- 
-description: A form widgets. Intended to be submitted.
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD/LSD.Native
-  - LSD/LSD.Trait.Form
-  - LSD/LSD.Trait.Fieldset
-
-provides: 
-  - LSD.Native.Form
- 
-...
-*/
-
-LSD.Native.Form = new Class({
-  Includes: [
-    LSD.Native,
-    LSD.Trait.Fieldset,
-    LSD.Trait.Form
-  ],
-  
-  options: {
-    tag: 'form',
-    events: {
-      element: {
-        submit: 'submit'
-      },
-      self: {
-        build: function() {
-          // novalidate html attribute disables internal form validation 
-          // on form submission. Chrome and Safari will block form 
-          // submission without any visual clues otherwise.
-          if (this.element.get('tag') == 'form') this.element.setProperty('novalidate', true);
-        }
-      }
-    }
-  }
 });
 /*
 ---
@@ -17268,51 +17443,6 @@ LSD.Native.Form.Edit = new Class({
 /*
 ---
  
-script: Button.js
- 
-description: A button widget. You click it, it fires the event
- 
-license: Public domain (http://unlicense.org).
-
-authors: Yaroslaff Fedin
- 
-requires:
-  - LSD/LSD.Native
-  - LSD/LSD.Mixin.Touchable
-
-provides: 
-  - LSD.Native.Button
- 
-...
-*/
-LSD.Native.Button = new Class({
-
-  Extends: LSD.Native,
-
-  options: {
-    tag: 'button',
-    element: {
-      tag: 'a'
-    },
-    events: {
-      _button: {
-        element: {
-          click: 'click'
-        }
-      }
-    },
-    pseudos: Array.fast('touchable')
-  },
-  
-  click: function(event) {
-    if (event && event.preventDefault) event.preventDefault();
-    if (!this.disabled) return this.parent.apply(this, arguments);
-  }
-});
-
-/*
----
- 
 script: Gamepon.js
  
 description: Basic script
@@ -17378,6 +17508,43 @@ Gamepon.Widget.Body = LSD.Native.Body;
 /*
 ---
  
+script: Facebook.js
+ 
+description: Body widget
+ 
+license: Public domain (http://unlicense.org).
+
+authors: Andrey Koppel
+ 
+requires:
+  - Gamepon.Widget
+  - LSD/LSD.Native
+
+provides:
+  - Gamepon.Widget.Facebook
+ 
+...
+*/
+
+Gamepon.Widget.Facebook = new Class({
+  Extends: LSD.Native,
+  
+  options: {
+    actions: {
+      facebook: {
+        enable: function(){
+          var script = new Element('script', {src: 'http://connect.facebook.net/en_US/all.js#xfbml=1', type: 'text/javascript'});
+          script.inject(this.element, 'after');
+        },
+        disable: function(){
+        }
+      }
+    }
+  }
+});
+/*
+---
+ 
 script: Application.js
  
 description: Main script of application
@@ -17400,13 +17567,22 @@ provides:
 ...
 */
 
+if(window.location.hash) window.location = window.location.hash.substr(1);
+
+//History.addEvent('change', function(url){
+//  console.info(url);
+//});
+
 Gamepon.Application = new LSD.Application(document);
 
 // Transformations
 Gamepon.Transformations = {
   'a.button': 'button',
   'a.button[type="submit"]': 'input[type="submit"]',
-  'div[animation]': 'animated'
+  'div[animation]': 'animated',
+  'div#fb-root': 'facebook'
 };
 Gamepon.Widget.Body.prototype.options.mutations = Gamepon.Transformations;
 Gamepon.Widget.Body.prototype.options.layout.options.context = 'element';
+
+LSD.Mixin.Request.prototype.options.request.evalScripts = true;

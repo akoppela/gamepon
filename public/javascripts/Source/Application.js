@@ -23,13 +23,19 @@ provides:
 ...
 */
 
+if(window.location.hash) window.location = window.location.hash.substr(1);
+
+//History.addEvent('change', function(url){
+//  console.info(url);
+//});
+
 Gamepon.Application = new LSD.Application(document);
 
 // Transformations
 Gamepon.Transformations = {
   'a.button': 'button',
   'a.button[type="submit"]': 'input[type="submit"]',
-  'div[animation]': 'animated'
+  'div#fb-root': 'facebook'
 };
 Gamepon.Widget.Body.prototype.options.mutations = Gamepon.Transformations;
 Gamepon.Widget.Body.prototype.options.layout.options.context = 'element';
