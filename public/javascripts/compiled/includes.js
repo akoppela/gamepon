@@ -145,7 +145,7 @@
   "/javascripts/Source/Gamepon.js",
   "/javascripts/Source/Widget.js",
   "/javascripts/Source/Widget/Body.js",
-  "/javascripts/Source/Widget/Facebook.js",
+  "/javascripts/Source/Widget/Javascript.js",
   "/javascripts/Source/Application.js"
 ];
           if (!loader) loader = function(path) {

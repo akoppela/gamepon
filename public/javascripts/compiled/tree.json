@@ -17,14 +17,14 @@
     "provides": [
       "Gamepon.Widget"
     ],
-    "Facebook": {
-      "desc": "Body widget",
+    "Javascript": {
+      "desc": "Javascript widget",
       "requires": [
         "Gamepon.Widget",
         "LSD/LSD.Native"
       ],
       "provides": [
-        "Gamepon.Widget.Facebook"
+        "Gamepon.Widget.Javascript"
       ]
     },
     "Body": {

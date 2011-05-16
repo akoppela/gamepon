@@ -5315,9 +5315,9 @@ LSD.Action.Update = LSD.Action.build({
   enable: function(target, content) {
     var widget = LSD.Module.DOM.find(target);
     var fragment = document.createFragment(content);
-    var children = Array.prototype.slice.call(fragment.childNodes, 0);
+    var children = LSD.slice(fragment.childNodes);
     document.id(target).empty().appendChild(fragment);
-    widget.fireEvent('DOMNodeInserted', children);
+    widget.fireEvent('DOMNodeInserted', [children]);
   }
 });
 /*
@@ -5398,9 +5398,9 @@ LSD.Action.Replace = LSD.Action.build({
     var widget = LSD.Module.DOM.find(target);
     if (widget == target) widget = widget.parentNode;
 		var fragment = document.createFragment(content);
-    var children = Array.prototype.slice.call(fragment.childNodes, 0);
+    var children = LSD.slice(fragment.childNodes);
     if (content) target.parentNode.replaceChild(fragment, target);
-    widget.fireEvent('DOMNodeInserted', children);
+    widget.fireEvent('DOMNodeInserted', [children]);
   }
 });
 /*
@@ -5713,9 +5713,9 @@ LSD.Action.Append = LSD.Action.build({
   enable: function(target, content) {
     var widget = LSD.Module.DOM.find(target);
     var fragment = document.createFragment(content);
-    var children = Array.prototype.slice.call(fragment.childNodes, 0);
+    var children = LSD.slice(fragment.childNodes);
     document.id(target).appendChild(fragment);
-    widget.fireEvent('DOMNodeInserted', children);
+    widget.fireEvent('DOMNodeInserted', [children]);
   }
 });
 /*
@@ -17508,9 +17508,9 @@ Gamepon.Widget.Body = LSD.Native.Body;
 /*
 ---
  
-script: Facebook.js
+script: Javascript.js
  
-description: Body widget
+description: Javascript widget
  
 license: Public domain (http://unlicense.org).
 
@@ -17521,19 +17521,19 @@ requires:
   - LSD/LSD.Native
 
 provides:
-  - Gamepon.Widget.Facebook
+  - Gamepon.Widget.Javascript
  
 ...
 */
 
-Gamepon.Widget.Facebook = new Class({
+Gamepon.Widget.Javascript = new Class({
   Extends: LSD.Native,
   
   options: {
     actions: {
-      facebook: {
+      script: {
         enable: function(){
-          var script = new Element('script', {src: 'http://connect.facebook.net/en_US/all.js#xfbml=1', type: 'text/javascript'});
+          var script = new Element('script', {src: this.attributes.href, type: 'text/javascript'});
           script.inject(this.element, 'after');
         },
         disable: function(){
@@ -17579,8 +17579,7 @@ Gamepon.Application = new LSD.Application(document);
 Gamepon.Transformations = {
   'a.button': 'button',
   'a.button[type="submit"]': 'input[type="submit"]',
-  'div[animation]': 'animated',
-  'div#fb-root': 'facebook'
+  'div#fb-root': 'javascript'
 };
 Gamepon.Widget.Body.prototype.options.mutations = Gamepon.Transformations;
 Gamepon.Widget.Body.prototype.options.layout.options.context = 'element';

@@ -1,9 +1,9 @@
 /*
 ---
  
-script: Facebook.js
+script: Javascript.js
  
-description: Body widget
+description: Javascript widget
  
 license: Public domain (http://unlicense.org).
 
@@ -14,19 +14,19 @@ requires:
   - LSD/LSD.Native
 
 provides:
-  - Gamepon.Widget.Facebook
+  - Gamepon.Widget.Javascript
  
 ...
 */
 
-Gamepon.Widget.Facebook = new Class({
+Gamepon.Widget.Javascript = new Class({
   Extends: LSD.Native,
   
   options: {
     actions: {
-      facebook: {
+      script: {
         enable: function(){
-          var script = new Element('script', {src: 'http://connect.facebook.net/en_US/all.js#xfbml=1', type: 'text/javascript'});
+          var script = new Element('script', {src: this.attributes.href, type: 'text/javascript'});
           script.inject(this.element, 'after');
         },
         disable: function(){

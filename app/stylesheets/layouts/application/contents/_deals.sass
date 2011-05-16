@@ -9,6 +9,8 @@ $deal_ticket: $baseline * 2.5
 $deal_video_width: 240px
 $deal_video_height: 180px
 
+$deal_footer: $baseline * 2
+
 #container #deals
   :position relative
   :margin
@@ -336,3 +338,24 @@ $deal_video_height: 180px
         :line-height 18px
         :margin
           :top $baseline / 2
+    > footer
+      :border
+        :top 1px solid #e7e7e7
+      :background #f3fafd
+      > section
+        +line-height($deal_footer, 24px)
+        > fb
+          :height 24px
+        & + aside
+          :margin
+            :top -$deal_footer
+      > aside
+        +line-height($deal_footer, 20px)
+        > a.twitter-share-button
+          +inline-block
+          :width 55px
+          :height 20px
+          :background url(/images/icons/twitt.png) no-repeat
+          +indented
+        > iframe .t-count
+          :background green !important

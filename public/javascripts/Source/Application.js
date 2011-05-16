@@ -35,7 +35,7 @@ Gamepon.Application = new LSD.Application(document);
 Gamepon.Transformations = {
   'a.button': 'button',
   'a.button[type="submit"]': 'input[type="submit"]',
-  'div#fb-root': 'facebook'
+  'div#fb-root': 'javascript'
 };
 Gamepon.Widget.Body.prototype.options.mutations = Gamepon.Transformations;
 Gamepon.Widget.Body.prototype.options.layout.options.context = 'element';

@@ -4,7 +4,7 @@
     "provides": [
       "Gamepon",
       "Gamepon.Widget",
-      "Gamepon.Widget.Facebook",
+      "Gamepon.Widget.Javascript",
       "Gamepon.Widget.Body",
       "Gamepon.Application",
       "Core/Slick.Parser",
