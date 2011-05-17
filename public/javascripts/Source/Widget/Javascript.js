@@ -20,8 +20,6 @@ provides:
 */
 
 Gamepon.Widget.Javascript = new Class({
-  Extends: LSD.Native,
-  
   options: {
     actions: {
       script: {

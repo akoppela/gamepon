@@ -11,7 +11,7 @@ authors: Andrey Koppel
  
 requires:
   - Gamepon.Widget
-  - Native/LSD.Native.Body
+  - Widgets/LSD.Widget.Body
 
 provides:
   - Gamepon.Widget.Body
@@ -19,4 +19,4 @@ provides:
 ...
 */
 
-Gamepon.Widget.Body = LSD.Native.Body;
+Gamepon.Widget.Body = LSD.Widget.Body;

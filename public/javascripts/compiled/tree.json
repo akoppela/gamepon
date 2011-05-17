@@ -31,7 +31,7 @@
       "desc": "Body widget",
       "requires": [
         "Gamepon.Widget",
-        "Native/LSD.Native.Body"
+        "Widgets/LSD.Widget.Body"
       ],
       "provides": [
         "Gamepon.Widget.Body"
@@ -43,8 +43,8 @@
     "requires": [
       "Gamepon",
       "Gamepon.Widget.*",
-      "Native/LSD.Native.Form",
-      "Native/LSD.Native.Button",
+      "Widgets/LSD.Widget.Form",
+      "Widgets/LSD.Widget.Button",
       "LSD/LSD.Action.*",
       "LSD/LSD.Application"
     ],

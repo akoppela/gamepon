@@ -12,8 +12,8 @@ authors: Andrey Koppel
 requires:
   - Gamepon
   - Gamepon.Widget.*
-  - Native/LSD.Native.Form
-  - Native/LSD.Native.Button
+  - Widgets/LSD.Widget.Form
+  - Widgets/LSD.Widget.Button
   - LSD/LSD.Action.*
   - LSD/LSD.Application
   
@@ -22,6 +22,8 @@ provides:
  
 ...
 */
+
+LSD.Element.pool.push(LSD.Widget);
 
 if(window.location.hash) window.location = window.location.hash.substr(1);
 
@@ -38,6 +40,5 @@ Gamepon.Transformations = {
   'div#fb-root': 'javascript'
 };
 Gamepon.Widget.Body.prototype.options.mutations = Gamepon.Transformations;
-Gamepon.Widget.Body.prototype.options.layout.options.context = 'element';
 
 LSD.Mixin.Request.prototype.options.request.evalScripts = true;
