@@ -227,9 +227,9 @@ body {
       box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
       -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
       -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
-      opacity: 0.95;
-      -moz-opacity: 0.95;
-      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+      opacity: 0.9;
+      -moz-opacity: 0.9;
+      filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=90)";
       color: #fffcfc;
       background: #999999; }
       #container > header > aside > menu > .button:hover {
@@ -453,9 +453,9 @@ body {
               box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
               -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
               -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
-              opacity: 0.95;
-              -moz-opacity: 0.95;
-              filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+              opacity: 0.9;
+              -moz-opacity: 0.9;
+              filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=90)";
               font-size: 16px;
               color: white;
               background: #669900; }
@@ -570,9 +570,9 @@ body {
             box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
             -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
             -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
-            opacity: 0.95;
-            -moz-opacity: 0.95;
-            filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";
+            opacity: 0.9;
+            -moz-opacity: 0.9;
+            filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=90)";
             color: white;
             background: #333333; }
             #container #deals > article > section > .cost > menu > .button:hover {
